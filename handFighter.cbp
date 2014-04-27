@@ -37,6 +37,8 @@
 		<Unit filename="config.make">
 			<Option virtualFolder="build config/" />
 		</Unit>
+		<Unit filename="src/colorfilters.cpp" />
+		<Unit filename="src/colorfilters.h" />
 		<Unit filename="src/filter.h" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/matrixops.cpp" />

@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxOpenCv.h"
+#include "ofxGui.h"
 
 const int CAPTURE_WIDTH = 800;
 const int CAPTURE_HEIGHT = 600;
@@ -21,10 +22,14 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+		void colorDominationFactorChanged(float &cdf);
 
     private:
 		ofVideoGrabber cam;
 		ofPixels background;
 		ofImage backgroundImg;
+		ofImage rednessFilterImage;
 		cv::Mat backgroundMat;
+		ofxPanel gui;
+		ofxFloatSlider colorDominationFactorSlider;
 };
