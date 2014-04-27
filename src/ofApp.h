@@ -1,6 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxOpenCv.h"
+
+const int CAPTURE_WIDTH = 800;
+const int CAPTURE_HEIGHT = 600;
 
 class ofApp : public ofBaseApp{
 	public:
@@ -22,4 +26,5 @@ class ofApp : public ofBaseApp{
 		ofVideoGrabber cam;
 		ofPixels background;
 		ofImage backgroundImg;
+		cv::Mat backgroundMat;
 };

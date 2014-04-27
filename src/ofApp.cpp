@@ -1,9 +1,11 @@
 #include "ofApp.h"
+#include "matrixops.h"
+#include "ofxOpenCv.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-    cam.initGrabber(640, 480, false);
+    cam.initGrabber(CAPTURE_WIDTH, CAPTURE_HEIGHT, false);
 }
 
 //--------------------------------------------------------------
@@ -18,7 +20,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofSetColor(255);
-    backgroundImg.draw(0,0, 300, 200);
+    backgroundImg.draw(0, 0, 300, 200);
 }
 
 //--------------------------------------------------------------
