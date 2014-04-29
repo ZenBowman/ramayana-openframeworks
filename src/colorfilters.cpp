@@ -2,7 +2,7 @@
 
 namespace MatrixOperations {
 
-    RednessFilter::RednessFilter() : RednessFilter(100, 1.2)
+    RednessFilter::RednessFilter() : RednessFilter(100, 1.5)
     {
     }
 

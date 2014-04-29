@@ -2,6 +2,7 @@
 #include "matrixops.h"
 #include "ofxOpenCv.h"
 #include "colorfilters.h"
+#include "findconnected.h"
 
 MatrixOperations::RednessFilter rednessFilter;
 MatrixOperations::BluenessFilter bluenessFilter;
@@ -33,7 +34,9 @@ void ofApp::update(){
         cv::cvtColor(frameMat, frameMat, CV_RGB2BGR);
         ofLog(OF_LOG_NOTICE, "Frameimage, width = %d, height = %d", frameMat.cols, frameMat.rows);
         cv::Mat newMat = MatrixOperations::applyPixelFilter(frameMat, rednessFilter);
-        rednessFilterImage.setFromPixels(newMat.data, newMat.cols, newMat.rows, OF_IMAGE_GRAYSCALE);
+        cv::Mat contourMat = drawMaxCountour(newMat);
+        //rednessFilterImage.setFromPixels(newMat.data, newMat.cols, newMat.rows, OF_IMAGE_GRAYSCALE);
+        rednessFilterImage.setFromPixels(contourMat.data, contourMat.cols, contourMat.rows, OF_IMAGE_COLOR);
     }
 
 }
