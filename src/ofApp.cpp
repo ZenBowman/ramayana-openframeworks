@@ -4,6 +4,7 @@
 #include "colorfilters.h"
 #include "findconnected.h"
 
+
 MatrixOperations::RednessFilter rednessFilter;
 MatrixOperations::BluenessFilter bluenessFilter;
 
@@ -11,6 +12,7 @@ MatrixOperations::BluenessFilter bluenessFilter;
 void ofApp::setup(){
     gui.setup();
     gui.add(colorDominationFactorSlider.setup( "Ratio", 1.2f, 1.0f, 3.0f ));
+    gui.add(centerOfMassLabel.setup("Center of mass", "COM"));
     gui.setPosition(600,0);
     colorDominationFactorSlider.addListener(this, &ofApp::colorDominationFactorChanged);
     cam.initGrabber(CAPTURE_WIDTH, CAPTURE_HEIGHT, false);
@@ -34,7 +36,14 @@ void ofApp::update(){
         cv::cvtColor(frameMat, frameMat, CV_RGB2BGR);
         ofLog(OF_LOG_NOTICE, "Frameimage, width = %d, height = %d", frameMat.cols, frameMat.rows);
         cv::Mat newMat = MatrixOperations::applyPixelFilter(frameMat, rednessFilter);
-        cv::Mat contourMat = drawMaxCountour(newMat);
+
+        int maxArea;
+        cv::Point maxCenterOfMass;
+
+        cv::Mat contourMat = drawMaxCountour(newMat, maxArea, maxCenterOfMass);
+        ofLog(OF_LOG_NOTICE, "Center of mass x = %d, y = %d", maxCenterOfMass.x, maxCenterOfMass.y);
+        centerOfMassLabel.setup("Center of mass", std::to_string(maxCenterOfMass.x));
+
         //rednessFilterImage.setFromPixels(newMat.data, newMat.cols, newMat.rows, OF_IMAGE_GRAYSCALE);
         rednessFilterImage.setFromPixels(contourMat.data, contourMat.cols, contourMat.rows, OF_IMAGE_COLOR);
     }
