@@ -7,6 +7,7 @@
 const int CAPTURE_WIDTH = 800;
 const int CAPTURE_HEIGHT = 600;
 
+
 class ofApp : public ofBaseApp{
 	public:
 		void setup();
@@ -33,4 +34,6 @@ class ofApp : public ofBaseApp{
 		ofxPanel gui;
 		ofxFloatSlider colorDominationFactorSlider;
 		ofxLabel centerOfMassLabel;
+
+		ofPoint subWindowSize;
 };

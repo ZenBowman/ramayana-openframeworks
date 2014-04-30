@@ -28,7 +28,6 @@ Mat drawMaxCountour(Mat &src, int &maxAreaOut, cv::Point &maxCenterOfMassOut) {
             auto m = moments(contour);
             maxCenterOfMassOut.x = m.m10/m.m00;
             maxCenterOfMassOut.y = m.m01/m.m00;
-            //ofLog(OF_LOG_NOTICE, "Moments = m10=%d, m01=%d, m00=%d", m.m10, m.m01, m.m00);
             maxAreaIndex = i;
         }
     }

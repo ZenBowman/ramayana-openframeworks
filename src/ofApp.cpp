@@ -10,12 +10,15 @@ MatrixOperations::BluenessFilter bluenessFilter;
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    subWindowSize.x = ofGetWindowSize().x / 3;
+    subWindowSize.y = ofGetWindowSize().y / 3;
+
     gui.setup();
     gui.add(colorDominationFactorSlider.setup( "Ratio", 1.2f, 1.0f, 3.0f ));
     gui.add(centerOfMassLabel.setup("Center of mass", "COM"));
     gui.setPosition(600,0);
     colorDominationFactorSlider.addListener(this, &ofApp::colorDominationFactorChanged);
-    cam.initGrabber(CAPTURE_WIDTH, CAPTURE_HEIGHT, false);
+    cam.initGrabber(subWindowSize.x, subWindowSize.y, false);
 }
 
 void ofApp::colorDominationFactorChanged(float &cdf){
@@ -53,8 +56,8 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofSetColor(255);
-    backgroundImg.draw(0, 0, 300, 200);
-    rednessFilterImage.draw(300, 0, 300, 200);
+    backgroundImg.draw(0, 0, subWindowSize.x, subWindowSize.y);
+    rednessFilterImage.draw(subWindowSize.x, 0, subWindowSize.x, subWindowSize.y);
     gui.draw();
 
 }
