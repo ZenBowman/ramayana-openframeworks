@@ -33,7 +33,8 @@ class ofApp : public ofBaseApp{
 		cv::Mat backgroundMat;
 		ofxPanel gui;
 		ofxFloatSlider colorDominationFactorSlider;
-		ofxLabel centerOfMassLabel;
+		ofxLabel centerOfMassLabelX;
+		ofxLabel centerOfMassLabelY;
 
 		ofPoint subWindowSize;
 };

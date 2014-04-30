@@ -15,8 +15,9 @@ void ofApp::setup(){
 
     gui.setup();
     gui.add(colorDominationFactorSlider.setup( "Ratio", 1.2f, 1.0f, 3.0f ));
-    gui.add(centerOfMassLabel.setup("Center of mass", "COM"));
-    gui.setPosition(600,0);
+    gui.add(centerOfMassLabelX.setup("Center of mass X", "COM"));
+    gui.add(centerOfMassLabelY.setup("Center of mass Y", "COM"));
+    gui.setPosition(subWindowSize.x,0);
     colorDominationFactorSlider.addListener(this, &ofApp::colorDominationFactorChanged);
     cam.initGrabber(subWindowSize.x, subWindowSize.y, false);
 }
@@ -45,7 +46,8 @@ void ofApp::update(){
 
         cv::Mat contourMat = drawMaxCountour(newMat, maxArea, maxCenterOfMass);
         ofLog(OF_LOG_NOTICE, "Center of mass x = %d, y = %d", maxCenterOfMass.x, maxCenterOfMass.y);
-        centerOfMassLabel.setup("Center of mass", std::to_string(maxCenterOfMass.x));
+        centerOfMassLabelX.setup("Center of mass X=", std::to_string(maxCenterOfMass.x));
+        centerOfMassLabelY.setup("Center of mass Y=", std::to_string(maxCenterOfMass.y));
 
         //rednessFilterImage.setFromPixels(newMat.data, newMat.cols, newMat.rows, OF_IMAGE_GRAYSCALE);
         rednessFilterImage.setFromPixels(contourMat.data, contourMat.cols, contourMat.rows, OF_IMAGE_COLOR);
