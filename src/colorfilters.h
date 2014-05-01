@@ -4,6 +4,7 @@
 #include "filter.h"
 
 namespace MatrixOperations {
+
   class RednessFilter : public PixelFilter {
   public:
     RednessFilter(unsigned char _minRed, float _colorDominationFactor);
@@ -13,6 +14,12 @@ namespace MatrixOperations {
     float colorDominationFactor;
     bool passesFilter(const Pixel &pixel) override;
   };
+
+  class YellownessFilter : public PixelFilter {
+  public:
+    bool passesFilter(const Pixel &pixel) override;
+  };
+
 
   class BluenessFilter : public PixelFilter {
   public:

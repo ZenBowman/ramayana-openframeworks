@@ -4,6 +4,7 @@
 #include "ofxOpenCv.h"
 #include "ofxGui.h"
 #include "game.h"
+#include "patternrecognizer.h"
 
 const int CAPTURE_WIDTH = 800;
 const int CAPTURE_HEIGHT = 600;
@@ -39,4 +40,5 @@ class ofApp : public ofBaseApp{
 
 		ofPoint subWindowSize;
 		std::unique_ptr<Ramayana::Game> game;
+		std::vector<Ramayana::InputAction> actionsForFrame;
 };

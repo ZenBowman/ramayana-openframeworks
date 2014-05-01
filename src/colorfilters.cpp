@@ -23,4 +23,9 @@ namespace MatrixOperations {
             (pixel.blue > (pixel.green * colorDominationFactor)));
   }
 
+  bool YellownessFilter::passesFilter(const Pixel &pixel) {
+    return ((pixel.red > 200) && (pixel.green > 200) && (pixel.blue < 100));
+  }
+
+
 }

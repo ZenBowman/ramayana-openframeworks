@@ -8,7 +8,6 @@
 MatrixOperations::RednessFilter rednessFilter;
 MatrixOperations::BluenessFilter bluenessFilter;
 
-
 const int SUBWINDOW_SIZE_X = 200;
 const int SUBWINDOW_SIZE_Y = 150;
 
@@ -40,7 +39,10 @@ void ofApp::colorDominationFactorChanged(float &cdf){
 //--------------------------------------------------------------
 void ofApp::update(){
     cam.update();
+
+
     if (cam.isFrameNew()) {
+        actionsForFrame.clear();
         background.setFromPixels(cam.getPixels(), cam.getWidth(), cam.getHeight(), OF_IMAGE_COLOR);
         backgroundImg.setFromPixels(background);
         ofxCvColorImage frameImg;
@@ -59,10 +61,16 @@ void ofApp::update(){
         centerOfMassLabelX.setup("Center of mass X=", std::to_string(maxCenterOfMass.x));
         centerOfMassLabelY.setup("Center of mass Y=", std::to_string(maxCenterOfMass.y));
 
+
+
+        if (maxCenterOfMass.x > (CAPTURE_WIDTH * 2 / 3)) {
+            actionsForFrame.push_back(Ramayana::MOVE_RIGHT);
+        }
         //rednessFilterImage.setFromPixels(newMat.data, newMat.cols, newMat.rows, OF_IMAGE_GRAYSCALE);
         rednessFilterImage.setFromPixels(contourMat.data, contourMat.cols, contourMat.rows, OF_IMAGE_COLOR);
     }
 
+    game->update(actionsForFrame, ofGetElapsedTimeMillis());
 }
 
 //--------------------------------------------------------------
