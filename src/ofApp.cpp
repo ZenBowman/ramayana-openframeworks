@@ -8,10 +8,16 @@
 MatrixOperations::RednessFilter rednessFilter;
 MatrixOperations::BluenessFilter bluenessFilter;
 
+
+const int SUBWINDOW_SIZE_X = 200;
+const int SUBWINDOW_SIZE_Y = 150;
+
 //--------------------------------------------------------------
 void ofApp::setup(){
-    subWindowSize.x = ofGetWindowSize().x / 3;
-    subWindowSize.y = ofGetWindowSize().y / 3;
+    subWindowSize.x = SUBWINDOW_SIZE_X;
+    subWindowSize.y = SUBWINDOW_SIZE_Y;
+
+    auto windowSize = ofGetWindowSize();
 
     gui.setup();
     gui.add(colorDominationFactorSlider.setup( "Ratio", 1.2f, 1.0f, 3.0f ));
@@ -19,7 +25,11 @@ void ofApp::setup(){
     gui.add(centerOfMassLabelY.setup("Center of mass Y", "COM"));
     gui.setPosition(subWindowSize.x,0);
     colorDominationFactorSlider.addListener(this, &ofApp::colorDominationFactorChanged);
-    cam.initGrabber(subWindowSize.x, subWindowSize.y, false);
+    cam.initGrabber(CAPTURE_WIDTH, CAPTURE_HEIGHT, false);
+
+    auto playerInitialPosition = ofPoint(0,0,0);
+    auto gameBounds = ofRectangle(0, SUBWINDOW_SIZE_Y, windowSize.x,windowSize.y - SUBWINDOW_SIZE_Y);
+    game = std::unique_ptr<Ramayana::Game>(new Ramayana::Game(playerInitialPosition, gameBounds));
 }
 
 void ofApp::colorDominationFactorChanged(float &cdf){
@@ -57,10 +67,12 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    const long long timeElapsed = ofGetElapsedTimeMillis();
     ofSetColor(255);
     backgroundImg.draw(0, 0, subWindowSize.x, subWindowSize.y);
     rednessFilterImage.draw(subWindowSize.x, 0, subWindowSize.x, subWindowSize.y);
     gui.draw();
+    game->draw(timeElapsed);
 
 }
 
