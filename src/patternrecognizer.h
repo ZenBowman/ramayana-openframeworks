@@ -3,20 +3,17 @@
 
 #include "ofxOpenCv.h"
 
-namespace Ramayana
-{
+namespace Ramayana {
 
-    enum InputAction
-    {
-        MOVE_RIGHT = 0,
-        MOVE_LEFT,
-        JUMP
-    };
+enum InputAction {
+  MOVE_RIGHT = 0,
+  MOVE_LEFT,
+  JUMP
+};
 
-    class PatternRecognizer
-    {
-        std::vector<InputAction> provideActions(cv::Mat &sourceImage);
-    };
+class PatternRecognizer {
+  std::vector<InputAction> provideActions(cv::Mat &sourceImage);
+};
 
 }
 

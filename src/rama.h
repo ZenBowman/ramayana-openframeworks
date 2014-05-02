@@ -4,30 +4,31 @@
 #include "ofMain.h"
 #include "patternrecognizer.h"
 
-namespace Ramayana
-{
-    enum RamaState
-    {
-        IDLE = 0,
-        WALKING
-    };
+namespace Ramayana {
+enum RamaState {
+  IDLE = 0,
+  WALKING
+};
 
-    class Rama
-    {
-        public:
-        Rama(ofPoint initialPosition);
-        ~Rama();
-        void draw(const long long &timeElapsed, ofRectangle &bounds);
-        void update(std::vector<Ramayana::InputAction> &movesForFrame, const long long &timeElapsed);
+class Rama {
+public:
+  Rama(ofPoint initialPosition);
+  ~Rama();
+  void draw(const long long &timeElapsed, ofRectangle &bounds);
+  void update(std::vector<Ramayana::InputAction> &movesForFrame,
+              const long long &timeElapsed);
 
-        private:
-        RamaState state;
+private:
+  RamaState state;
 
-        ofImage ramaIdle;
-        ofImage ramaWalk1;
-        ofImage ramaWalk2;
-        ofPoint position;
-    };
+  ofImage ramaIdle;
+  ofImage ramaWalk1;
+  ofImage ramaWalk2;
+  ofImage ramaWalk3;
+  ofImage ramaWalk4;
+
+  ofPoint position;
+};
 
 }
 

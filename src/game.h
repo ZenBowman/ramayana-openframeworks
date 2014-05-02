@@ -5,21 +5,20 @@
 #include "patternrecognizer.h"
 #include "rama.h"
 
-namespace Ramayana
-{
+namespace Ramayana {
 
-    class Game
-    {
-    public:
-        void update(std::vector<Ramayana::InputAction> &movesForFrame, const long long &timeElapsed);
-        void draw(const long long &timeElapsed);
-        Game(ofPoint initialPlayerPosition, ofRectangle gameBounds);
-        ~Game();
+class Game {
+public:
+  void update(std::vector<Ramayana::InputAction> &movesForFrame,
+              const long long &timeElapsed);
+  void draw(const long long &timeElapsed);
+  Game(ofPoint initialPlayerPosition, ofRectangle gameBounds);
+  ~Game();
 
-    private:
-        ofRectangle bounds;
-        Rama rama;
-    };
+private:
+  ofRectangle bounds;
+  Rama rama;
+};
 
 }
 

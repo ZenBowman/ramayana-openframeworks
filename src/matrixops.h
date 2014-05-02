@@ -10,7 +10,7 @@ typedef cv::Mat ImageMatrix;
 
 namespace MatrixOperations {
 
-  ImageMatrix applyPixelFilter(ImageMatrix &source, PixelFilter &pixelFilter);
+ImageMatrix applyPixelFilter(ImageMatrix &source, PixelFilter &pixelFilter);
 
 }
 

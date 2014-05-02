@@ -1,31 +1,21 @@
 #include "game.h"
 
-namespace Ramayana
-{
+namespace Ramayana {
 
+Game::Game(ofPoint initialPlayerPosition, ofRectangle gameBounds)
+    : rama(initialPlayerPosition), bounds(gameBounds) {}
 
+Game::~Game() {}
 
-    Game::Game(ofPoint initialPlayerPosition, ofRectangle gameBounds)
-        : rama(initialPlayerPosition), bounds(gameBounds)
-    {
+void Game::update(std::vector<Ramayana::InputAction> &movesForFrame,
+                  const long long &timeElapsed) {
+  rama.update(movesForFrame, timeElapsed);
 
-    }
+}
 
-    Game::~Game()
-    {
-    }
+void Game::draw(const long long &timeElapsed) {
+  rama.draw(timeElapsed, bounds);
 
-    void Game::update(std::vector<Ramayana::InputAction> &movesForFrame, const long long &timeElapsed)
-    {
-        rama.update(movesForFrame, timeElapsed);
-
-    }
-
-    void Game::draw(const long long &timeElapsed)
-    {
-        rama.draw(timeElapsed, bounds);
-
-    }
-
+}
 
 }
