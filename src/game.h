@@ -16,6 +16,7 @@ public:
   ~Game();
 
 private:
+  ofPoint bottomLeft;
   ofRectangle bounds;
   Rama rama;
 };

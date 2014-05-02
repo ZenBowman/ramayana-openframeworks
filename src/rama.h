@@ -14,9 +14,12 @@ class Rama {
 public:
   Rama(ofPoint initialPosition);
   ~Rama();
-  void draw(const long long &timeElapsed, ofRectangle &bounds);
+  void draw(const long long &timeElapsed, ofRectangle &bounds,
+            ofPoint &bottomLeft);
   void update(std::vector<Ramayana::InputAction> &movesForFrame,
               const long long &timeElapsed);
+
+  ofPoint position;
 
 private:
   RamaState state;
@@ -27,7 +30,7 @@ private:
   ofImage ramaWalk3;
   ofImage ramaWalk4;
 
-  ofPoint position;
+
 };
 
 }

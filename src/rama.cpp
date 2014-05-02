@@ -36,30 +36,36 @@ void Rama::update(std::vector<Ramayana::InputAction> &movesForFrame,
 
 }
 
-void Rama::draw(const long long &timeElapsed, ofRectangle &bounds) {
+void Rama::draw(const long long &timeElapsed, ofRectangle &bounds,
+                ofPoint &bottomLeft) {
   if (state == IDLE) {
-    ramaIdle.draw(position.x,
-                  bounds.y + bounds.height - RAMA_HEIGHT - position.y,
-                  RAMA_WIDTH, RAMA_HEIGHT);
+    ramaIdle.draw(
+        position.x - bottomLeft.x,
+        bounds.y + bounds.height - RAMA_HEIGHT - position.y + bottomLeft.y,
+        RAMA_WIDTH, RAMA_HEIGHT);
   } else if (state == WALKING) {
     const int timeElapsedPeriod = timeElapsed % 600;
 
     if (timeElapsedPeriod > 450) {
-      ramaWalk1.draw(position.x,
-                     bounds.y + bounds.height - RAMA_HEIGHT - position.y,
-                     RAMA_WIDTH, RAMA_HEIGHT);
+      ramaWalk1.draw(
+          position.x - bottomLeft.x,
+          bounds.y + bounds.height - RAMA_HEIGHT - position.y + bottomLeft.y,
+          RAMA_WIDTH, RAMA_HEIGHT);
     } else if (timeElapsedPeriod > 300) {
-      ramaWalk2.draw(position.x,
-                     bounds.y + bounds.height - RAMA_HEIGHT - position.y,
-                     RAMA_WIDTH, RAMA_HEIGHT);
+      ramaWalk2.draw(
+          position.x - bottomLeft.x,
+          bounds.y + bounds.height - RAMA_HEIGHT - position.y + bottomLeft.y,
+          RAMA_WIDTH, RAMA_HEIGHT);
     } else if (timeElapsedPeriod > 150) {
-      ramaWalk3.draw(position.x,
-                     bounds.y + bounds.height - RAMA_HEIGHT - position.y,
-                     RAMA_WIDTH, RAMA_HEIGHT);
+      ramaWalk3.draw(
+          position.x - bottomLeft.x,
+          bounds.y + bounds.height - RAMA_HEIGHT - position.y + bottomLeft.y,
+          RAMA_WIDTH, RAMA_HEIGHT);
     } else {
-      ramaWalk4.draw(position.x,
-                     bounds.y + bounds.height - RAMA_HEIGHT - position.y,
-                     RAMA_WIDTH, RAMA_HEIGHT);
+      ramaWalk4.draw(
+          position.x - bottomLeft.x,
+          bounds.y + bounds.height - RAMA_HEIGHT - position.y + bottomLeft.y,
+          RAMA_WIDTH, RAMA_HEIGHT);
     }
   }
 }
