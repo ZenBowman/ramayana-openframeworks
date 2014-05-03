@@ -39,14 +39,23 @@
 		</Unit>
 		<Unit filename="src/colorfilters.cpp" />
 		<Unit filename="src/colorfilters.h" />
+		<Unit filename="src/constants.h" />
 		<Unit filename="src/filter.h" />
 		<Unit filename="src/findconnected.cpp" />
 		<Unit filename="src/findconnected.h" />
+		<Unit filename="src/game.cpp" />
+		<Unit filename="src/game.h" />
+		<Unit filename="src/handfighter.cpp" />
+		<Unit filename="src/handfighter.h" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/matrixops.cpp" />
 		<Unit filename="src/matrixops.h" />
 		<Unit filename="src/ofApp.cpp" />
 		<Unit filename="src/ofApp.h" />
+		<Unit filename="src/patternrecognizer.cpp" />
+		<Unit filename="src/patternrecognizer.h" />
+		<Unit filename="src/rama.cpp" />
+		<Unit filename="src/rama.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
