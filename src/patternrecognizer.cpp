@@ -9,6 +9,7 @@ using namespace Ramayana;
 using namespace MatrixOperations;
 
 RednessFilter rednessFilter;
+const int rednessFilterMinArea = 2500;
 
 void PlayerMovementRecognizer::draw() {
   rednessFilterImage.draw(bounds);
@@ -17,6 +18,7 @@ void PlayerMovementRecognizer::draw() {
 
 void PlayerMovementRecognizer::configure(const ofRectangle &bounds) {
   gui.setup();
+  gui.add(areaLabel.setup("Area", ""));
   gui.add(centerOfMassLabelX.setup("X", "COM"));
   gui.add(centerOfMassLabelY.setup("Y", "COM"));
   gui.setPosition(bounds.x, bounds.y);
@@ -33,13 +35,15 @@ PlayerMovementRecognizer::provideActions(cv::Mat &sourceImage) {
   cv::Point maxCenterOfMass;
 
   cv::Mat contourMat = drawMaxCountour(newMat, maxArea, maxCenterOfMass);
+  areaLabel.setup("AreaX=", to_string(area));
   centerOfMassLabelX.setup("X=", to_string(maxCenterOfMass.x));
   centerOfMassLabelY.setup("Y=", to_string(maxCenterOfMass.y));
 
-  if (maxCenterOfMass.x > (CAPTURE_WIDTH * 2 / 3)) {
+  if ((maxArea > rednessFilterMinArea) && (maxCenterOfMass.x > (CAPTURE_WIDTH * 2 / 3))) {
     actionsForFrame.push_back(Ramayana::MOVE_RIGHT);
   }
 
+  area = maxArea;
   rednessFilterImage.setFromPixels(contourMat.data, contourMat.cols,
                                    contourMat.rows, OF_IMAGE_COLOR);
 

@@ -31,8 +31,10 @@ private:
   ofRectangle bounds;
   ofxPanel gui;
   ofImage rednessFilterImage;
+  ofxLabel areaLabel;
   ofxLabel centerOfMassLabelX;
   ofxLabel centerOfMassLabelY;
+  double area;
 };
 
 
