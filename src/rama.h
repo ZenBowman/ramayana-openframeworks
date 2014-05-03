@@ -7,7 +7,8 @@
 namespace Ramayana {
 enum RamaState {
   IDLE = 0,
-  WALKING
+  WALKING,
+  JUMPING
 };
 
 class Rama {
@@ -30,7 +31,8 @@ private:
   ofImage ramaWalk3;
   ofImage ramaWalk4;
 
-
+  double speed;
+  ofVec2f velocity;
 };
 
 }
