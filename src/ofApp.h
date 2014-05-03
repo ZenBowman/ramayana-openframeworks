@@ -5,9 +5,7 @@
 #include "ofxGui.h"
 #include "game.h"
 #include "patternrecognizer.h"
-
-const int CAPTURE_WIDTH = 800;
-const int CAPTURE_HEIGHT = 600;
+#include "constants.h"
 
 class ofApp : public ofBaseApp {
 public:
@@ -34,8 +32,7 @@ private:
   cv::Mat backgroundMat;
   ofxPanel gui;
   ofxFloatSlider colorDominationFactorSlider;
-  ofxLabel centerOfMassLabelX;
-  ofxLabel centerOfMassLabelY;
+
 
   ofPoint subWindowSize;
   std::unique_ptr<Ramayana::Game> game;

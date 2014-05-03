@@ -3,7 +3,9 @@
 namespace Ramayana {
 
 Game::Game(ofPoint initialPlayerPosition, ofRectangle gameBounds)
-    : rama(initialPlayerPosition), bounds(gameBounds), bottomLeft(ofPoint(0,0,0)) {}
+    : rama(initialPlayerPosition), bounds(gameBounds), bottomLeft(ofPoint(0,0,0)) {
+        backgroundImage.loadImage("ayodhya.png");
+    }
 
 Game::~Game() {}
 
@@ -17,6 +19,7 @@ void Game::update(std::vector<Ramayana::InputAction> &movesForFrame,
 }
 
 void Game::draw(const long long &timeElapsed) {
+  backgroundImage.draw(0 - bottomLeft.x, 0);
   rama.draw(timeElapsed, bounds, bottomLeft);
 
 }
