@@ -9,10 +9,10 @@ const int RAMA_WIDTH = 100;
 const int RAMA_HEIGHT = 100;
 
 const int MAX_JUMP_HEIGHT = 200;
+const int MIN_Y_POSITION = 20;
+const double SCALE_FACTOR = 0.05;
 
-const double SCALE_FACTOR = 0.001;
-
-Rama::Rama(ofPoint initialPosition) : position(initialPosition), speed(1), velocity(ofVec2f(0,0)) {
+Rama::Rama(ofPoint initialPosition) : position(initialPosition), speed(5), velocity(ofVec2f(0,0)) {
   ramaIdle.loadImage("ramaIdle.png");
   ramaWalk1.loadImage("ramaWalk1.png");
   ramaWalk2.loadImage("ramaWalk2.png");
@@ -25,31 +25,45 @@ Rama::~Rama() {}
 void Rama::update(std::vector<Ramayana::InputAction> &movesForFrame,
                   const long long &timeElapsed) {
   ofLog(OF_LOG_NOTICE, "x = %f, y = %f", position.x, position.y);
-  bool anyMovement = false;
+  bool movingRight = false;
+  bool initiatedJumpInFrame = false;
   for (const auto action : movesForFrame) {
     if (action == JUMP) {
       if (state != JUMPING) {
         ofLog(OF_LOG_NOTICE, "Initiating jump");
         state = JUMPING;
+        if (movingRight) {
+            velocity.x = 3;
+        }
         velocity.y = 20;
+        initiatedJumpInFrame = true;
       }
     }
-    if (state != JUMPING) {
-      if (action == MOVE_RIGHT) {
-        anyMovement = true;
+    if (action == MOVE_RIGHT) {
+        if (state != JUMPING) {
+        movingRight = true;
         state = WALKING;
         position.x += timeElapsed * speed * SCALE_FACTOR;
+      }
+      else if (initiatedJumpInFrame) {
+        velocity.x += 10;
       }
     }
   }
   if (state == WALKING) {
-    if (!anyMovement) {
+    if (!movingRight) {
       state = IDLE;
     }
   } else if (state == JUMPING) {
     position.x += velocity.x * SCALE_FACTOR * timeElapsed;
     position.y += velocity.y * SCALE_FACTOR * timeElapsed;
     velocity.y -= SCALE_FACTOR * timeElapsed; // gravity
+    if (position.y < MIN_Y_POSITION) {
+        position.y = MIN_Y_POSITION;
+        state = IDLE;
+        velocity.y = 0;
+        velocity.x = 0;
+    }
   }
 
 }

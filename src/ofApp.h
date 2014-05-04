@@ -7,6 +7,11 @@
 #include "patternrecognizer.h"
 #include "constants.h"
 
+enum KeyMap {
+    KEY_RIGHT = 0,
+    KEY_UP = 1
+};
+
 class ofApp : public ofBaseApp {
 public:
   void setup();
@@ -25,6 +30,8 @@ public:
   void colorDominationFactorChanged(float &cdf);
 
 private:
+  long long lastElapsedTime;
+
   ofVideoGrabber cam;
   ofPixels background;
   ofImage backgroundImg;
@@ -37,4 +44,6 @@ private:
   ofPoint subWindowSize;
   std::unique_ptr<Ramayana::Game> game;
   std::vector<Ramayana::InputAction> actionsForFrame;
+
+  bool keyDown[4];
 };

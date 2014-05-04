@@ -10,6 +10,7 @@ const int SUBWINDOW_SIZE_Y = 150;
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+  lastElapsedTime = 0L;
   subWindowSize.x = SUBWINDOW_SIZE_X;
   subWindowSize.y = SUBWINDOW_SIZE_Y;
 
@@ -27,10 +28,16 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+  const long long newElapsedTime = ofGetElapsedTimeMillis();
+  const long long deltaTime = newElapsedTime - lastElapsedTime;
+
+  lastElapsedTime = newElapsedTime;
+
   cam.update();
 
   if (cam.isFrameNew()) {
     actionsForFrame.clear();
+
     background.setFromPixels(cam.getPixels(), cam.getWidth(), cam.getHeight(),
                              OF_IMAGE_COLOR);
     backgroundImg.setFromPixels(background);
@@ -41,11 +48,18 @@ void ofApp::update() {
     cv::cvtColor(frameMat, frameMat, CV_RGB2BGR);
     ofLog(OF_LOG_NOTICE, "Frameimage, width = %d, height = %d", frameMat.cols,
           frameMat.rows);
+
+    if (keyDown[KEY_RIGHT]) {
+        actionsForFrame.push_back(Ramayana::MOVE_RIGHT);
+    }
+    if (keyDown[KEY_UP]) {
+        actionsForFrame.push_back(Ramayana::JUMP);
+    }
     auto actions = movementRecognizer.provideActions(frameMat);
     actionsForFrame.insert(actionsForFrame.end(), actions.begin(), actions.end());
   }
 
-  game->update(actionsForFrame, ofGetElapsedTimeMillis());
+  game->update(actionsForFrame, deltaTime);
 }
 
 //--------------------------------------------------------------
@@ -59,10 +73,22 @@ void ofApp::draw() {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {}
+void ofApp::keyPressed(int key) {
+    if (key == OF_KEY_RIGHT) {
+        keyDown[KEY_RIGHT] = true;
+    } else if (key == OF_KEY_UP) {
+        keyDown[KEY_UP] = true;
+    }
+}
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key) {}
+void ofApp::keyReleased(int key) {
+    if (key == OF_KEY_RIGHT) {
+        keyDown[KEY_RIGHT] = false;
+    } else if (key == OF_KEY_UP) {
+        keyDown[KEY_UP] = false;
+    }
+}
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y) {}

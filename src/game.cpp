@@ -1,4 +1,5 @@
 #include "game.h"
+#include "constants.h"
 
 namespace Ramayana {
 
@@ -19,7 +20,8 @@ void Game::update(std::vector<Ramayana::InputAction> &movesForFrame,
 }
 
 void Game::draw(const long long &timeElapsed) {
-  backgroundImage.draw(0 - bottomLeft.x, 0);
+  const double scaleFactor = WINDOW_HEIGHT / backgroundImage.getHeight();
+  backgroundImage.draw(0 - bottomLeft.x, 0, backgroundImage.getWidth() * scaleFactor, WINDOW_HEIGHT);
   rama.draw(timeElapsed, bounds, bottomLeft);
 
 }
