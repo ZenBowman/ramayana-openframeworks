@@ -49,11 +49,11 @@ void ofApp::update() {
     ofLog(OF_LOG_NOTICE, "Frameimage, width = %d, height = %d", frameMat.cols,
           frameMat.rows);
 
-    if (keyDown[KEY_RIGHT]) {
-        actionsForFrame.push_back(Ramayana::MOVE_RIGHT);
+    if (keyDown[KeyMap::KEY_RIGHT]) {
+        actionsForFrame.push_back(Ramayana::InputAction::MOVE_RIGHT);
     }
-    if (keyDown[KEY_UP]) {
-        actionsForFrame.push_back(Ramayana::JUMP);
+    if (keyDown[KeyMap::KEY_UP]) {
+        actionsForFrame.push_back(Ramayana::InputAction::JUMP);
     }
     auto actions = movementRecognizer.provideActions(frameMat);
     actionsForFrame.insert(actionsForFrame.end(), actions.begin(), actions.end());
@@ -75,18 +75,18 @@ void ofApp::draw() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
     if (key == OF_KEY_RIGHT) {
-        keyDown[KEY_RIGHT] = true;
+        keyDown[KeyMap::KEY_RIGHT] = true;
     } else if (key == OF_KEY_UP) {
-        keyDown[KEY_UP] = true;
+        keyDown[KeyMap::KEY_UP] = true;
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
     if (key == OF_KEY_RIGHT) {
-        keyDown[KEY_RIGHT] = false;
+        keyDown[KeyMap::KEY_RIGHT] = false;
     } else if (key == OF_KEY_UP) {
-        keyDown[KEY_UP] = false;
+        keyDown[KeyMap::KEY_UP] = false;
     }
 }
 

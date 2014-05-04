@@ -6,7 +6,7 @@
 
 namespace Ramayana {
 
-enum InputAction {
+enum class InputAction {
   MOVE_RIGHT = 0,
   MOVE_LEFT,
   JUMP

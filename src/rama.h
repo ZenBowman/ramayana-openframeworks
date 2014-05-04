@@ -10,7 +10,7 @@ namespace Ramayana {
 
 struct Block;
 
-enum RamaState {
+enum class RamaState {
   IDLE = 0,
   WALKING,
   JUMPING

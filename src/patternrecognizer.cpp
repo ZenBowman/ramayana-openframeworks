@@ -42,10 +42,10 @@ PlayerMovementRecognizer::provideActions(cv::Mat &sourceImage) {
   if (maxArea > rednessFilterMinArea) {
       ofLog(OF_LOG_NOTICE, "COM y=%d, 2/3 capture=%d", maxCenterOfMass.y, CAPTURE_HEIGHT*2/3);
       if (maxCenterOfMass.y < (CAPTURE_HEIGHT * 1 / 3)) {
-        actionsForFrame.push_back(Ramayana::JUMP);
+        actionsForFrame.push_back(Ramayana::InputAction::JUMP);
       }
       else if (maxCenterOfMass.x > (CAPTURE_WIDTH * 2 / 3)) {
-        actionsForFrame.push_back(Ramayana::MOVE_RIGHT);
+        actionsForFrame.push_back(Ramayana::InputAction::MOVE_RIGHT);
       }
 
   }

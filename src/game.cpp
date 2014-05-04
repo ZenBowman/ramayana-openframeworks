@@ -7,8 +7,8 @@ Block::Block(ofRectangle _bounds, ofImage &_texture)
     : bounds(_bounds), texture(_texture) {}
 
 Game::Game(ofPoint initialPlayerPosition, ofRectangle gameBounds)
-    : rama(initialPlayerPosition), bounds(gameBounds),
-      bottomLeft(ofPoint(0, 0, 0)) {
+    : bottomLeft(ofPoint(0, 0, 0)), bounds(gameBounds),
+      rama(initialPlayerPosition) {
 
   // Later on all these should be loaded from instances of Level objects
   backgroundImage.loadImage("ayodhya.png");
@@ -37,7 +37,9 @@ void Game::draw(const long long &timeElapsed) {
   rama.draw(timeElapsed, bounds, bottomLeft);
 
   for (const auto &block : blocks) {
-    block.texture.draw(block.bounds.x - bottomLeft.x, WINDOW_HEIGHT - block.bounds.y - block.bounds.height, block.bounds.width, block.bounds.height);
+    block.texture.draw(block.bounds.x - bottomLeft.x,
+                       WINDOW_HEIGHT - block.bounds.y - block.bounds.height,
+                       block.bounds.width, block.bounds.height);
   }
 
 }
