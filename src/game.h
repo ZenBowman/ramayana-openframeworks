@@ -7,6 +7,12 @@
 
 namespace Ramayana {
 
+struct Block {
+  Block(ofRectangle _bounds, ofImage &_texture);
+  ofRectangle bounds;
+  ofImage &texture;
+};
+
 class Game {
 public:
   void update(std::vector<Ramayana::InputAction> &movesForFrame,
@@ -20,6 +26,9 @@ private:
   ofRectangle bounds;
   Rama rama;
   ofImage backgroundImage;
+
+  std::vector<Block> blocks;
+  std::vector<ofImage> blockImages;
 };
 
 }

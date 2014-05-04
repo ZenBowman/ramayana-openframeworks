@@ -4,7 +4,12 @@
 #include "ofMain.h"
 #include "patternrecognizer.h"
 
+
+
 namespace Ramayana {
+
+struct Block;
+
 enum RamaState {
   IDLE = 0,
   WALKING,
@@ -18,6 +23,7 @@ public:
   void draw(const long long &timeElapsed, ofRectangle &bounds,
             ofPoint &bottomLeft);
   void update(std::vector<Ramayana::InputAction> &movesForFrame,
+              std::vector<Block> &blocks,
               const long long &timeElapsed);
 
   ofPoint position;

@@ -2,6 +2,8 @@
 
 #include "ofMain.h"
 #include "patternrecognizer.h"
+#include "matrixops.h"
+#include "game.h"
 
 namespace Ramayana {
 
@@ -12,7 +14,8 @@ const int MAX_JUMP_HEIGHT = 200;
 const int MIN_Y_POSITION = 20;
 const double SCALE_FACTOR = 0.05;
 
-Rama::Rama(ofPoint initialPosition) : position(initialPosition), speed(5), velocity(ofVec2f(0,0)) {
+Rama::Rama(ofPoint initialPosition)
+    : position(initialPosition), speed(5), velocity(ofVec2f(0, 0)) {
   ramaIdle.loadImage("ramaIdle.png");
   ramaWalk1.loadImage("ramaWalk1.png");
   ramaWalk2.loadImage("ramaWalk2.png");
@@ -23,8 +26,8 @@ Rama::Rama(ofPoint initialPosition) : position(initialPosition), speed(5), veloc
 Rama::~Rama() {}
 
 void Rama::update(std::vector<Ramayana::InputAction> &movesForFrame,
-                  const long long &timeElapsed) {
-  ofLog(OF_LOG_NOTICE, "x = %f, y = %f", position.x, position.y);
+                  std::vector<Block> &blocks, const long long &timeElapsed) {
+  //ofLog(OF_LOG_NOTICE, "x = %f, y = %f", position.x, position.y);
   bool movingRight = false;
   bool initiatedJumpInFrame = false;
   for (const auto action : movesForFrame) {
@@ -33,19 +36,27 @@ void Rama::update(std::vector<Ramayana::InputAction> &movesForFrame,
         ofLog(OF_LOG_NOTICE, "Initiating jump");
         state = JUMPING;
         if (movingRight) {
-            velocity.x = 3;
+          velocity.x = 3;
         }
         velocity.y = 20;
         initiatedJumpInFrame = true;
       }
     }
     if (action == MOVE_RIGHT) {
-        if (state != JUMPING) {
+      if (state != JUMPING) {
         movingRight = true;
         state = WALKING;
         position.x += timeElapsed * speed * SCALE_FACTOR;
-      }
-      else if (initiatedJumpInFrame) {
+        for (const auto &block : blocks) {
+            ofLog(OF_LOG_NOTICE,"Block bounds = (%f, %f, %f, %f)", block.bounds.x, block.bounds.y, block.bounds.width, block.bounds.height);
+            ofLog(OF_LOG_NOTICE,"Player bounds = (%f, %f, %d, %d)", position.x, position.y, RAMA_WIDTH, RAMA_HEIGHT);
+          if (MatrixOperations::doesCollide(
+                  ofRectangle(position.x, position.y, RAMA_WIDTH, RAMA_HEIGHT),
+                  block.bounds)) {
+            position.x = block.bounds.x - RAMA_WIDTH;
+          }
+        }
+      } else if (initiatedJumpInFrame) {
         velocity.x += 10;
       }
     }
@@ -59,10 +70,10 @@ void Rama::update(std::vector<Ramayana::InputAction> &movesForFrame,
     position.y += velocity.y * SCALE_FACTOR * timeElapsed;
     velocity.y -= SCALE_FACTOR * timeElapsed; // gravity
     if (position.y < MIN_Y_POSITION) {
-        position.y = MIN_Y_POSITION;
-        state = IDLE;
-        velocity.y = 0;
-        velocity.x = 0;
+      position.y = MIN_Y_POSITION;
+      state = IDLE;
+      velocity.y = 0;
+      velocity.x = 0;
     }
   }
 

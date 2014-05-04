@@ -12,6 +12,8 @@ namespace MatrixOperations {
 
 ImageMatrix applyPixelFilter(ImageMatrix &source, PixelFilter &pixelFilter);
 
+bool doesCollide(const ofRectangle &r1, const ofRectangle &r2);
+
 }
 
 #endif
