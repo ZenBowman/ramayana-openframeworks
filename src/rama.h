@@ -3,7 +3,7 @@
 
 #include "ofMain.h"
 #include "patternrecognizer.h"
-
+#include "ofxGui.h"
 
 
 namespace Ramayana {
@@ -39,6 +39,11 @@ private:
 
   double speed;
   ofVec2f velocity;
+  ofxPanel gui;
+  ofxLabel positionX;
+  ofxLabel positionY;
+  ofxLabel velocityX;
+  ofxLabel velocityY;
 };
 
 }

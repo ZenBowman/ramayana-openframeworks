@@ -8,7 +8,7 @@ using namespace std;
 using namespace Ramayana;
 using namespace MatrixOperations;
 
-RednessFilter rednessFilter;
+RednessFilter rednessFilter(80, 1.25);
 const int rednessFilterMinArea = 2500;
 
 void PlayerMovementRecognizer::draw() {
@@ -44,7 +44,7 @@ PlayerMovementRecognizer::provideActions(cv::Mat &sourceImage) {
       if (maxCenterOfMass.y < (CAPTURE_HEIGHT * 1 / 3)) {
         actionsForFrame.push_back(Ramayana::InputAction::JUMP);
       }
-      else if (maxCenterOfMass.x > (CAPTURE_WIDTH * 2 / 3)) {
+      if (maxCenterOfMass.x > (CAPTURE_WIDTH * 3 / 4)) {
         actionsForFrame.push_back(Ramayana::InputAction::MOVE_RIGHT);
       }
 

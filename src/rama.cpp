@@ -13,6 +13,8 @@ const int RAMA_HEIGHT = 100;
 const int MAX_JUMP_HEIGHT = 200;
 const int MIN_Y_POSITION = 20;
 const double SCALE_FACTOR = 0.05;
+const int JUMP_VELOCITY_X = 3;
+const int JUMP_VELOCITY_Y = 20;
 
 Rama::Rama(ofPoint initialPosition)
     : position(initialPosition), speed(5), velocity(ofVec2f(0, 0)) {
@@ -21,6 +23,13 @@ Rama::Rama(ofPoint initialPosition)
   ramaWalk2.loadImage("ramaWalk2.png");
   ramaWalk3.loadImage("ramaWalk3.png");
   ramaWalk4.loadImage("ramaWalk4.png");
+
+  gui.setup();
+  gui.add(positionX.setup("X", ""));
+  gui.add(positionY.setup("Y", ""));
+  gui.add(velocityX.setup("Velocity.X", ""));
+  gui.add(velocityY.setup("Velocity.Y", ""));
+  gui.setPosition(initialPosition);
 }
 
 Rama::~Rama() {}
@@ -28,6 +37,12 @@ Rama::~Rama() {}
 void Rama::update(std::vector<Ramayana::InputAction> &movesForFrame,
                   std::vector<Block> &blocks, const long long &timeElapsed) {
   //ofLog(OF_LOG_NOTICE, "x = %f, y = %f", position.x, position.y);
+
+  positionX.setup("X", std::to_string(position.x));
+  positionY.setup("Y", std::to_string(position.y));
+  velocityX.setup("Velocity.X", std::to_string(velocity.x));
+  velocityY.setup("Velocity.Y", std::to_string(velocity.y));
+
   bool movingRight = false;
   bool initiatedJumpInFrame = false;
   for (const auto action : movesForFrame) {
@@ -36,9 +51,9 @@ void Rama::update(std::vector<Ramayana::InputAction> &movesForFrame,
         ofLog(OF_LOG_NOTICE, "Initiating jump");
         state = RamaState::JUMPING;
         if (movingRight) {
-          velocity.x = 3;
+          velocity.x = JUMP_VELOCITY_X;
         }
-        velocity.y = 20;
+        velocity.y = JUMP_VELOCITY_Y;
         initiatedJumpInFrame = true;
       }
     }
@@ -57,7 +72,7 @@ void Rama::update(std::vector<Ramayana::InputAction> &movesForFrame,
           }
         }
       } else if (initiatedJumpInFrame) {
-        velocity.x += 10;
+        velocity.x = JUMP_VELOCITY_X;
       }
     }
   }
@@ -81,6 +96,7 @@ void Rama::update(std::vector<Ramayana::InputAction> &movesForFrame,
 
 void Rama::draw(const long long &timeElapsed, ofRectangle &bounds,
                 ofPoint &bottomLeft) {
+  gui.draw();
   if (state == RamaState::IDLE) {
     ramaIdle.draw(
         position.x - bottomLeft.x,

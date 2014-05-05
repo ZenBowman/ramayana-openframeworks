@@ -2,7 +2,7 @@
 
 namespace MatrixOperations {
 
-RednessFilter::RednessFilter() : RednessFilter(100, 1.5) {}
+RednessFilter::RednessFilter() : RednessFilter(100, 1.25) {}
 
 RednessFilter::RednessFilter(unsigned char _minRed,
                              float _colorDominationFactor)

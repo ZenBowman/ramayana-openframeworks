@@ -13,6 +13,7 @@ struct Pixel {
 class PixelFilter {
 public:
   virtual bool passesFilter(const Pixel &pixel) = 0;
+  virtual ~PixelFilter() {}
 };
 
 }
