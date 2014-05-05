@@ -5,54 +5,37 @@
 #include "patternrecognizer.h"
 #include "ofxGui.h"
 
-
 namespace Ramayana {
 
 struct Block;
 
 enum class RamaState {
-  IDLE = 0,
-  WALKING,
-  JUMPING
+  IDLE = 0, WALKING, JUMPING
 };
 
 class Rama;
 
-class RamaStateBehavior {
-    RamaState state;
-
-    virtual void draw(const long long &timeElapsed, ofRectangle &bounds,
-            ofPoint &bottomLeft, Rama *rama) = 0;
-
-    virtual void update(std::vector<Ramayana::InputAction> &movesForFrame,
-              std::vector<Block> &blocks,
-              const long long &timeElapsed) = 0;
-};
-
-class IdleStateBehavior : public RamaStateBehavior {
-    ofImage ramaIdle;
-
-    void draw(const long long &timeElapsed, ofRectangle &bounds,
-            ofPoint &bottomLeft, Rama *rama) override;
-};
+typedef std::vector<Block> BlockVect;
+typedef const long long TimeMillis;
 
 class Rama {
 public:
   Rama(ofPoint initialPosition);
   ~Rama();
-  void draw(const long long &timeElapsed, ofRectangle &bounds,
-            ofPoint &bottomLeft);
-  void update(std::vector<Ramayana::InputAction> &movesForFrame,
-              std::vector<Block> &blocks,
-              const long long &timeElapsed);
+  void draw(TimeMillis &timeElapsed, ofRectangle &bounds, ofPoint &bottomLeft);
+  void update(bool *movesForFrame, BlockVect &blocks, TimeMillis &timeElapsed);
 
   ofPoint position;
 
 private:
+
+  void updateIdle(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed);
+  void updateWalking(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed);
+  void updateJumping(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed);
+
   friend class IdleStateBehavior;
 
   RamaState state;
-  RamaStateBehavior *currentBehavior;
 
   ofImage ramaIdle;
   ofImage ramaWalk1;

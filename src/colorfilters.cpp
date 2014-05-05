@@ -9,6 +9,9 @@ RednessFilter::RednessFilter(unsigned char _minRed,
     : minRed(_minRed), colorDominationFactor(_colorDominationFactor) {}
 
 bool RednessFilter::passesFilter(const Pixel &pixel) {
+  // TODO: convert to HSI color space and see if you can improve this
+  //return (pixel.hue < 100 && pixel.saturation > 100 and pixel.value > 50 );
+  // Note: Didn't work as expected, retry later
   return ((pixel.red > minRed) &&
           (pixel.red > (pixel.blue * colorDominationFactor)) &&
           (pixel.red > (pixel.green * colorDominationFactor)));

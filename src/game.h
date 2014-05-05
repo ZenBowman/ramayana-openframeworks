@@ -29,6 +29,8 @@ private:
 
   std::vector<Block> blocks;
   std::vector<ofImage> blockImages;
+
+  bool actionsEnabled[InputAction::NUM_ACTIONS];
 };
 
 }

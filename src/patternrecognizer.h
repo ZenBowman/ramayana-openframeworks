@@ -6,10 +6,12 @@
 
 namespace Ramayana {
 
-enum class InputAction {
+enum InputAction {
   MOVE_RIGHT = 0,
   MOVE_LEFT,
-  JUMP
+  JUMP,
+
+  NUM_ACTIONS
 };
 
 class PatternRecognizer {

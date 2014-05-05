@@ -23,7 +23,16 @@ Game::~Game() {}
 
 void Game::update(std::vector<Ramayana::InputAction> &movesForFrame,
                   const long long &timeElapsed) {
-  rama.update(movesForFrame, blocks, timeElapsed);
+
+  for (int i=0; i<InputAction::NUM_ACTIONS; i++) {
+    actionsEnabled[i] = false;
+  }
+
+  for (const auto inputAction : movesForFrame) {
+    actionsEnabled[inputAction] = true;
+  }
+
+  rama.update(actionsEnabled, blocks, timeElapsed);
   if ((rama.position.x - bottomLeft.x) > (0.75 * bounds.width)) {
     bottomLeft.x += (bounds.width * 0.5);
   }

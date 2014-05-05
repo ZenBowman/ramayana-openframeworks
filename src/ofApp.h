@@ -28,8 +28,10 @@ public:
   void dragEvent(ofDragInfo dragInfo);
   void gotMessage(ofMessage msg);
   void colorDominationFactorChanged(float &cdf);
+  void audioIn(float * input, int bufferSize, int nChannels) override;
 
 private:
+  ofSoundStream soundStream;
   long long lastElapsedTime;
 
   ofVideoGrabber cam;
@@ -44,6 +46,9 @@ private:
   ofPoint subWindowSize;
   std::unique_ptr<Ramayana::Game> game;
   std::vector<Ramayana::InputAction> actionsForFrame;
+
+  float left[256];
+  float right[256];
 
   bool keyDown[4];
 };

@@ -7,4 +7,6 @@ const int CAPTURE_HEIGHT = 600;
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
 
+void debug(std::string msg);
+
 #endif
