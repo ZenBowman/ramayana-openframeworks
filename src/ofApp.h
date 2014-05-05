@@ -31,6 +31,7 @@ public:
   void audioIn(float * input, int bufferSize, int nChannels) override;
 
 private:
+  static const int bufferSize = 256;
   ofSoundStream soundStream;
   long long lastElapsedTime;
 
@@ -47,8 +48,8 @@ private:
   std::unique_ptr<Ramayana::Game> game;
   std::vector<Ramayana::InputAction> actionsForFrame;
 
-  float left[256];
-  float right[256];
+  float left[bufferSize];
+  float right[bufferSize];
 
   bool keyDown[4];
 };

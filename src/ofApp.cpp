@@ -30,7 +30,7 @@ void ofApp::setup() {
 
   movementRecognizer.configure(ofRectangle(subWindowSize.x, 0, subWindowSize.x, subWindowSize.y));
 
-  const int bufferSize = 256;
+
   soundStream.setup(this, 0, 2, 44100, bufferSize, 4);
 }
 
@@ -105,6 +105,29 @@ void ofApp::draw() {
   backgroundImg.draw(0, 0, subWindowSize.x, subWindowSize.y);
   movementRecognizer.draw();
   game->draw(timeElapsed);
+
+  	ofPushStyle();
+		ofPushMatrix();
+		ofTranslate(subWindowSize.x * 2, 0, 0);
+
+		ofSetColor(60);
+		ofDrawBitmapString("Left Channel", 4, 18);
+
+		ofSetLineWidth(1);
+		ofRect(0, 0, subWindowSize.x, subWindowSize.y);
+
+		ofSetColor(245, 58, 135);
+		ofSetLineWidth(3);
+
+			ofBeginShape();
+			for (unsigned int i = 0; i < subWindowSize.x; i++){
+                int index = (i / (double) subWindowSize.x) * bufferSize;
+				ofVertex(i, 100 -left[index]*250.0f);
+			}
+			ofEndShape(false);
+
+		ofPopMatrix();
+	ofPopStyle();
 
 }
 
