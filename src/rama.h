@@ -16,6 +16,26 @@ enum class RamaState {
   JUMPING
 };
 
+class Rama;
+
+class RamaStateBehavior {
+    RamaState state;
+
+    virtual void draw(const long long &timeElapsed, ofRectangle &bounds,
+            ofPoint &bottomLeft, Rama *rama) = 0;
+
+    virtual void update(std::vector<Ramayana::InputAction> &movesForFrame,
+              std::vector<Block> &blocks,
+              const long long &timeElapsed) = 0;
+};
+
+class IdleStateBehavior : public RamaStateBehavior {
+    ofImage ramaIdle;
+
+    void draw(const long long &timeElapsed, ofRectangle &bounds,
+            ofPoint &bottomLeft, Rama *rama) override;
+};
+
 class Rama {
 public:
   Rama(ofPoint initialPosition);
@@ -29,7 +49,10 @@ public:
   ofPoint position;
 
 private:
+  friend class IdleStateBehavior;
+
   RamaState state;
+  RamaStateBehavior *currentBehavior;
 
   ofImage ramaIdle;
   ofImage ramaWalk1;

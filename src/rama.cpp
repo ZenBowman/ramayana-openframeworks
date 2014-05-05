@@ -16,6 +16,15 @@ const double SCALE_FACTOR = 0.05;
 const int JUMP_VELOCITY_X = 3;
 const int JUMP_VELOCITY_Y = 20;
 
+void IdleStateBehavior::draw(const long long &timeElapsed, ofRectangle &bounds,
+                             ofPoint &bottomLeft, Rama *rama) {
+  ramaIdle.draw(
+      rama->position.x - bottomLeft.x,
+      bounds.y + bounds.height - RAMA_HEIGHT - rama->position.y + bottomLeft.y,
+      RAMA_WIDTH, RAMA_HEIGHT);
+
+}
+
 Rama::Rama(ofPoint initialPosition)
     : position(initialPosition), speed(5), velocity(ofVec2f(0, 0)) {
   ramaIdle.loadImage("ramaIdle.png");
@@ -63,8 +72,11 @@ void Rama::update(std::vector<Ramayana::InputAction> &movesForFrame,
         state = RamaState::WALKING;
         position.x += timeElapsed * speed * SCALE_FACTOR;
         for (const auto &block : blocks) {
-            ofLog(OF_LOG_NOTICE,"Block bounds = (%f, %f, %f, %f)", block.bounds.x, block.bounds.y, block.bounds.width, block.bounds.height);
-            ofLog(OF_LOG_NOTICE,"Player bounds = (%f, %f, %d, %d)", position.x, position.y, RAMA_WIDTH, RAMA_HEIGHT);
+          ofLog(OF_LOG_NOTICE, "Block bounds = (%f, %f, %f, %f)",
+                block.bounds.x, block.bounds.y, block.bounds.width,
+                block.bounds.height);
+          ofLog(OF_LOG_NOTICE, "Player bounds = (%f, %f, %d, %d)", position.x,
+                position.y, RAMA_WIDTH, RAMA_HEIGHT);
           if (MatrixOperations::doesCollide(
                   ofRectangle(position.x, position.y, RAMA_WIDTH, RAMA_HEIGHT),
                   block.bounds)) {
