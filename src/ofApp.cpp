@@ -9,9 +9,7 @@ Ramayana::PlayerMovementRecognizer movementRecognizer;
 const int SUBWINDOW_SIZE_X = 200;
 const int SUBWINDOW_SIZE_Y = 150;
 
-void debug(std::string msg) {
-  ofLog(OF_LOG_NOTICE, msg);
-}
+void debug(std::string msg) { ofLog(OF_LOG_NOTICE, msg); }
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -28,37 +26,37 @@ void ofApp::setup() {
   game = std::unique_ptr<Ramayana::Game>(
       new Ramayana::Game(playerInitialPosition, gameBounds));
 
-  movementRecognizer.configure(ofRectangle(subWindowSize.x, 0, subWindowSize.x, subWindowSize.y));
-
+  movementRecognizer.configure(
+      ofRectangle(subWindowSize.x, 0, subWindowSize.x, subWindowSize.y));
 
   soundStream.setup(this, 0, 2, 44100, bufferSize, 4);
 }
 
+void ofApp::audioIn(float *input, int bufferSize, int nChannels) {
 
-void ofApp::audioIn(float * input, int bufferSize, int nChannels){
+  float curVol = 0.0;
 
-	float curVol = 0.0;
+  // samples are "interleaved"
+  int numCounted = 0;
 
-	// samples are "interleaved"
-	int numCounted = 0;
+  //lets go through each sample and calculate the root mean square which is a
+  //rough way to calculate volume
+  for (int i = 0; i < bufferSize; i++) {
+    left[i] = input[i * 2] * 0.5;
+    right[i] = input[i * 2 + 1] * 0.5;
 
-	//lets go through each sample and calculate the root mean square which is a rough way to calculate volume
-	for (int i = 0; i < bufferSize; i++){
-		left[i]		= input[i*2]*0.5;
-		right[i]	= input[i*2+1]*0.5;
+    curVol += left[i] * left[i];
+    curVol += right[i] * right[i];
+    numCounted += 2;
+  }
 
-		curVol += left[i] * left[i];
-		curVol += right[i] * right[i];
-		numCounted+=2;
-	}
+  //this is how we get the mean of rms :)
+  curVol /= (float) numCounted;
 
-	//this is how we get the mean of rms :)
-	curVol /= (float)numCounted;
+  // this is how we get the root of rms :)
+  curVol = sqrt(curVol);
 
-	// this is how we get the root of rms :)
-	curVol = sqrt( curVol );
-
-    //debug("Current volume = " + std::to_string(curVol));
+  //debug("Current volume = " + std::to_string(curVol));
 
 }
 
@@ -86,13 +84,14 @@ void ofApp::update() {
           frameMat.rows);
 
     if (keyDown[KeyMap::KEY_RIGHT]) {
-        actionsForFrame.push_back(Ramayana::InputAction::MOVE_RIGHT);
+      actionsForFrame.push_back(Ramayana::InputAction::MOVE_RIGHT);
     }
     if (keyDown[KeyMap::KEY_UP]) {
-        actionsForFrame.push_back(Ramayana::InputAction::JUMP);
+      actionsForFrame.push_back(Ramayana::InputAction::JUMP);
     }
     auto actions = movementRecognizer.provideActions(frameMat);
-    actionsForFrame.insert(actionsForFrame.end(), actions.begin(), actions.end());
+    actionsForFrame.insert(actionsForFrame.end(), actions.begin(),
+                           actions.end());
   }
 
   game->update(actionsForFrame, deltaTime);
@@ -106,47 +105,47 @@ void ofApp::draw() {
   movementRecognizer.draw();
   game->draw(timeElapsed);
 
-  	ofPushStyle();
-		ofPushMatrix();
-		ofTranslate(subWindowSize.x * 2, 0, 0);
+  ofPushStyle();
+  ofPushMatrix();
+  ofTranslate(subWindowSize.x * 2, 0, 0);
 
-		ofSetColor(60);
-		ofDrawBitmapString("Left Channel", 4, 18);
+  ofSetColor(60);
+  ofDrawBitmapString("Left Channel", 4, 18);
 
-		ofSetLineWidth(1);
-		ofRect(0, 0, subWindowSize.x, subWindowSize.y);
+  ofSetLineWidth(1);
+  ofRect(0, 0, subWindowSize.x, subWindowSize.y);
 
-		ofSetColor(245, 58, 135);
-		ofSetLineWidth(3);
+  ofSetColor(245, 58, 135);
+  ofSetLineWidth(3);
 
-			ofBeginShape();
-			for (unsigned int i = 0; i < subWindowSize.x; i++){
-                int index = (i / (double) subWindowSize.x) * bufferSize;
-				ofVertex(i, 100 -left[index]*250.0f);
-			}
-			ofEndShape(false);
+  ofBeginShape();
+  for (unsigned int i = 0; i < subWindowSize.x; i++) {
+    int index = (i / (double) subWindowSize.x) * bufferSize;
+    ofVertex(i, 100 - left[index] * 250.0f);
+  }
+  ofEndShape(false);
 
-		ofPopMatrix();
-	ofPopStyle();
+  ofPopMatrix();
+  ofPopStyle();
 
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-    if (key == OF_KEY_RIGHT) {
-        keyDown[KeyMap::KEY_RIGHT] = true;
-    } else if (key == OF_KEY_UP) {
-        keyDown[KeyMap::KEY_UP] = true;
-    }
+  if (key == OF_KEY_RIGHT) {
+    keyDown[KeyMap::KEY_RIGHT] = true;
+  } else if (key == OF_KEY_UP) {
+    keyDown[KeyMap::KEY_UP] = true;
+  }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
-    if (key == OF_KEY_RIGHT) {
-        keyDown[KeyMap::KEY_RIGHT] = false;
-    } else if (key == OF_KEY_UP) {
-        keyDown[KeyMap::KEY_UP] = false;
-    }
+  if (key == OF_KEY_RIGHT) {
+    keyDown[KeyMap::KEY_RIGHT] = false;
+  } else if (key == OF_KEY_UP) {
+    keyDown[KeyMap::KEY_UP] = false;
+  }
 }
 
 //--------------------------------------------------------------

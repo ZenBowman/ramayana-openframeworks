@@ -43,6 +43,9 @@ private:
   ofImage ramaWalk3;
   ofImage ramaWalk4;
 
+  bool onBlock;
+  Block *weightBearingBlock;
+
   double speed;
   ofVec2f velocity;
   ofxPanel gui;

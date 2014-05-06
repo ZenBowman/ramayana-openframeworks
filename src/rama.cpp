@@ -5,6 +5,8 @@
 #include "matrixops.h"
 #include "game.h"
 
+using namespace MatrixOperations;
+
 namespace Ramayana {
 
 const int RAMA_WIDTH = 100;
@@ -17,7 +19,8 @@ const int JUMP_VELOCITY_X = 3;
 const int JUMP_VELOCITY_Y = 20;
 
 Rama::Rama(ofPoint initialPosition)
-    : position(initialPosition), speed(5), velocity(ofVec2f(0, 0)) {
+    : position(initialPosition), speed(5), velocity(ofVec2f(0, 0)),
+      onBlock(false), weightBearingBlock(nullptr) {
   ramaIdle.loadImage("ramaIdle.png");
   ramaWalk1.loadImage("ramaWalk1.png");
   ramaWalk2.loadImage("ramaWalk2.png");
@@ -34,12 +37,38 @@ Rama::Rama(ofPoint initialPosition)
 
 Rama::~Rama() {}
 
+ofRectangle boundingBoxFor(const ofPoint &position) {
+  ofRectangle bb;
+  bb.x = position.x;
+  bb.y = position.y;
+  bb.width = RAMA_WIDTH;
+  bb.height = RAMA_HEIGHT;
+  return bb;
+}
+
 void Rama::updateJumping(bool *moves, BlockVect &blocks,
                          TimeMillis &timeElapsed) {
   if (state == RamaState::JUMPING) {
+    const ofPoint oldPosition = position;
     position.x += velocity.x * SCALE_FACTOR * timeElapsed;
     position.y += velocity.y * SCALE_FACTOR * timeElapsed;
     velocity.y -= SCALE_FACTOR * timeElapsed; // gravity
+    for (auto &block : blocks) {
+      if (doesCollide(boundingBoxFor(position), block.bounds)) {
+        RelativeDirection direction =
+            getRelativePosition(boundingBoxFor(position), block.bounds);
+        if (direction.isAbove) {
+          position.y = block.bounds.y + block.bounds.height;
+          state = RamaState::IDLE;
+          onBlock = true;
+          weightBearingBlock = &block;
+        } else {
+          position.x = block.bounds.x - RAMA_WIDTH;
+        }
+
+      }
+    }
+
     if (position.y < MIN_Y_POSITION) {
       position.y = MIN_Y_POSITION;
       state = RamaState::IDLE;
@@ -51,6 +80,16 @@ void Rama::updateJumping(bool *moves, BlockVect &blocks,
 
 void Rama::updateWalking(bool *moves, BlockVect &blocks,
                          TimeMillis &timeElapsed) {
+  if (onBlock) {
+    if (!doesCollide(boundingBoxFor(position), weightBearingBlock->bounds))      {
+        velocity.x = 0;
+        velocity.y = 0;
+        state = RamaState::JUMPING;
+        onBlock = false;
+        weightBearingBlock = nullptr;
+        return;
+    }
+  }
   if (moves[InputAction::JUMP]) {
     ofLog(OF_LOG_NOTICE, "Initiating jump");
     state = RamaState::JUMPING;
@@ -64,6 +103,9 @@ void Rama::updateWalking(bool *moves, BlockVect &blocks,
     state = RamaState::WALKING;
     position.x += timeElapsed * speed * SCALE_FACTOR;
     for (const auto &block : blocks) {
+      if (onBlock && weightBearingBlock == (&block)) {
+          continue;
+          }
       ofLog(OF_LOG_NOTICE, "Block bounds = (%f, %f, %f, %f)", block.bounds.x,
             block.bounds.y, block.bounds.width, block.bounds.height);
       ofLog(OF_LOG_NOTICE, "Player bounds = (%f, %f, %d, %d)", position.x,
@@ -94,17 +136,6 @@ void Rama::updateIdle(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed) {
   if (moves[InputAction::MOVE_RIGHT]) {
     state = RamaState::WALKING;
     position.x += timeElapsed * speed * SCALE_FACTOR;
-    for (const auto &block : blocks) {
-      ofLog(OF_LOG_NOTICE, "Block bounds = (%f, %f, %f, %f)", block.bounds.x,
-            block.bounds.y, block.bounds.width, block.bounds.height);
-      ofLog(OF_LOG_NOTICE, "Player bounds = (%f, %f, %d, %d)", position.x,
-            position.y, RAMA_WIDTH, RAMA_HEIGHT);
-      if (MatrixOperations::doesCollide(
-              ofRectangle(position.x, position.y, RAMA_WIDTH, RAMA_HEIGHT),
-              block.bounds)) {
-        position.x = block.bounds.x - RAMA_WIDTH;
-      }
-    }
   }
 }
 
