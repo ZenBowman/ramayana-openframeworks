@@ -81,13 +81,13 @@ void Rama::updateJumping(bool *moves, BlockVect &blocks,
 void Rama::updateWalking(bool *moves, BlockVect &blocks,
                          TimeMillis &timeElapsed) {
   if (onBlock) {
-    if (!doesCollide(boundingBoxFor(position), weightBearingBlock->bounds))      {
-        velocity.x = 0;
-        velocity.y = 0;
-        state = RamaState::JUMPING;
-        onBlock = false;
-        weightBearingBlock = nullptr;
-        return;
+    if (!doesCollide(boundingBoxFor(position), weightBearingBlock->bounds)) {
+      velocity.x = 0;
+      velocity.y = 0;
+      state = RamaState::JUMPING;
+      onBlock = false;
+      weightBearingBlock = nullptr;
+      return;
     }
   }
   if (moves[InputAction::JUMP]) {
@@ -104,15 +104,9 @@ void Rama::updateWalking(bool *moves, BlockVect &blocks,
     position.x += timeElapsed * speed * SCALE_FACTOR;
     for (const auto &block : blocks) {
       if (onBlock && weightBearingBlock == (&block)) {
-          continue;
-          }
-      ofLog(OF_LOG_NOTICE, "Block bounds = (%f, %f, %f, %f)", block.bounds.x,
-            block.bounds.y, block.bounds.width, block.bounds.height);
-      ofLog(OF_LOG_NOTICE, "Player bounds = (%f, %f, %d, %d)", position.x,
-            position.y, RAMA_WIDTH, RAMA_HEIGHT);
-      if (MatrixOperations::doesCollide(
-              ofRectangle(position.x, position.y, RAMA_WIDTH, RAMA_HEIGHT),
-              block.bounds)) {
+        continue;
+      }
+      if (doesCollide(boundingBoxFor(position), block.bounds)) {
         position.x = block.bounds.x - RAMA_WIDTH;
       }
     }
