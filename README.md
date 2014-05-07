@@ -6,4 +6,4 @@ A game based on the Indian Epic Ramayana that uses video and audio input to cont
 Credits
 =======
 
-Art for the central Rama character was done by Ujwal Nair <ujwalnair@gmail.com>
+Art for the central Rama character was done by Ujwal Nair (<ujwalnair@gmail.com>)
