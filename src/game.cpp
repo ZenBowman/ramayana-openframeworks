@@ -11,12 +11,16 @@ Game::Game(ofPoint initialPlayerPosition, ofRectangle gameBounds)
       rama(initialPlayerPosition) {
 
   // Later on all these should be loaded from instances of Level objects
-  backgroundImage.loadImage("ayodhya.png");
+  backgroundImage.loadImage("tatakasForest.png");
   ofImage basicBlockImage;
   basicBlockImage.loadImage("block.png");
   blockImages.push_back(basicBlockImage);
 
   blocks.push_back(Block(ofRectangle(300, 100, 100, 50), blockImages[0]));
+  blocks.push_back(Block(ofRectangle(500, 100, 100, 50), blockImages[0]));
+  blocks.push_back(Block(ofRectangle(500, 0, 100, 50), blockImages[0]));
+  blocks.push_back(Block(ofRectangle(500, 50, 100, 50), blockImages[0]));
+
 }
 
 Game::~Game() {}
@@ -24,7 +28,7 @@ Game::~Game() {}
 void Game::update(std::vector<Ramayana::InputAction> &movesForFrame,
                   const long long &timeElapsed) {
 
-  for (int i=0; i<InputAction::NUM_ACTIONS; i++) {
+  for (int i = 0; i < InputAction::NUM_ACTIONS; i++) {
     actionsEnabled[i] = false;
   }
 
@@ -40,8 +44,10 @@ void Game::update(std::vector<Ramayana::InputAction> &movesForFrame,
 }
 
 void Game::draw(const long long &timeElapsed) {
-  const double scaleFactor = WINDOW_HEIGHT / backgroundImage.getHeight();
-  backgroundImage.draw(0 - bottomLeft.x, 0,
+  const double scaleFactor =
+      (double) WINDOW_HEIGHT / (double) backgroundImage.getHeight();
+  //ofLogNotice() << "Scale factor = " << scaleFactor;
+  backgroundImage.draw(0, 0,
                        backgroundImage.getWidth() * scaleFactor, WINDOW_HEIGHT);
   rama.draw(timeElapsed, bounds, bottomLeft);
 

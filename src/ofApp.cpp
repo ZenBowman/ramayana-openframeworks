@@ -56,8 +56,10 @@ void ofApp::audioIn(float *input, int bufferSize, int nChannels) {
   // this is how we get the root of rms :)
   curVol = sqrt(curVol);
 
-  //debug("Current volume = " + std::to_string(curVol));
-
+  soundBuffer.push_back(curVol);
+  if (soundBuffer.size() > bufferSize) {
+    soundBuffer.erase(soundBuffer.begin());
+  }
 }
 
 //--------------------------------------------------------------
@@ -101,9 +103,9 @@ void ofApp::update() {
 void ofApp::draw() {
   const long long timeElapsed = ofGetElapsedTimeMillis();
   ofSetColor(255);
+  game->draw(timeElapsed);
   backgroundImg.draw(0, 0, subWindowSize.x, subWindowSize.y);
   movementRecognizer.draw();
-  game->draw(timeElapsed);
 
   ofPushStyle();
   ofPushMatrix();
@@ -119,9 +121,8 @@ void ofApp::draw() {
   ofSetLineWidth(3);
 
   ofBeginShape();
-  for (unsigned int i = 0; i < subWindowSize.x; i++) {
-    int index = (i / (double) subWindowSize.x) * bufferSize;
-    ofVertex(i, 100 - left[index] * 250.0f);
+  for (unsigned int i = 0; i < soundBuffer.size(); i++) {
+    ofVertex(i, 100 - soundBuffer[i] * 250.0f);
   }
   ofEndShape(false);
 

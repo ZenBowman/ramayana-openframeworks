@@ -11,9 +11,20 @@ using namespace MatrixOperations;
 RednessFilter rednessFilter(80, 1.25);
 const int rednessFilterMinArea = 2500;
 
+constexpr double moveRightMinXRatio = 3.0/4;
+constexpr double jumpMinYRatio = 1.0/3;
+
+void MoveLine::draw() {
+  ofLine(x1, y1, x2, y2);
+}
+
 void PlayerMovementRecognizer::draw() {
   rednessFilterImage.draw(bounds);
   gui.draw();
+  ofSetColor(255);
+  ofCircle(bounds.x + smoothedCenterOfMass.x * xScale, smoothedCenterOfMass.y * yScale, 5);
+  rightMoveLine.draw();
+  jumpLine.draw();
 }
 
 void PlayerMovementRecognizer::configure(const ofRectangle &bounds) {
@@ -23,6 +34,21 @@ void PlayerMovementRecognizer::configure(const ofRectangle &bounds) {
   gui.add(centerOfMassLabelY.setup("Y", "COM"));
   gui.setPosition(bounds.x, bounds.y);
   this->bounds = bounds;
+
+  xScale = (double) bounds.width / CAPTURE_WIDTH;
+  yScale = (double) bounds.height / CAPTURE_HEIGHT;
+
+  rightMoveLine.x1 = rightMoveLine.x2 = bounds.x + moveRightMinXRatio * bounds.width;
+  rightMoveLine.y1 = bounds.y;
+  rightMoveLine.y2 = bounds.y + bounds.height;
+
+  jumpLine.x1 = bounds.x;
+  jumpLine.x2 = bounds.x + bounds.width;
+  jumpLine.y1 = jumpLine.y2 = jumpMinYRatio * bounds.height;
+
+  for (int i=0; i<centerOfMassHistorySize; i++) {
+    centerOfMassHistory[i] = cv::Point(0,0);
+  }
 }
 
 vector<InputAction>
@@ -32,22 +58,35 @@ PlayerMovementRecognizer::provideActions(cv::Mat &sourceImage) {
   cv::Mat newMat = applyPixelFilter(sourceImage, rednessFilter);
 
   int maxArea;
-  cv::Point maxCenterOfMass;
 
   cv::Mat contourMat = drawMaxCountour(newMat, maxArea, maxCenterOfMass);
+
+  double smoothedCenterOfMassX = 0.0;
+  double smoothedCenterOfMassY = 0.0;
+
+  for (int i=0; i<centerOfMassHistorySize-1; i++) {
+    centerOfMassHistory[i] = centerOfMassHistory[i+1];
+    smoothedCenterOfMassX += smoothedContributionFactor * centerOfMassHistory[i].x;
+    smoothedCenterOfMassY += smoothedContributionFactor * centerOfMassHistory[i].y;
+  }
+  centerOfMassHistory[centerOfMassHistorySize-1] = maxCenterOfMass;
+  smoothedCenterOfMassX += smoothedContributionFactor * maxCenterOfMass.x;
+  smoothedCenterOfMassY += smoothedContributionFactor * maxCenterOfMass.y;
+  smoothedCenterOfMass.x = smoothedCenterOfMassX;
+  smoothedCenterOfMass.y = smoothedCenterOfMassY;
+
   areaLabel.setup("AreaX=", to_string(area));
-  centerOfMassLabelX.setup("X=", to_string(maxCenterOfMass.x));
-  centerOfMassLabelY.setup("Y=", to_string(maxCenterOfMass.y));
+  centerOfMassLabelX.setup("X=", to_string(bounds.x + maxCenterOfMass.x * xScale));
+  centerOfMassLabelY.setup("Y=", to_string(maxCenterOfMass.y * yScale));
 
   if (maxArea > rednessFilterMinArea) {
       ofLog(OF_LOG_NOTICE, "COM y=%d, 2/3 capture=%d", maxCenterOfMass.y, CAPTURE_HEIGHT*2/3);
-      if (maxCenterOfMass.y < (CAPTURE_HEIGHT * 1 / 3)) {
+      if (smoothedCenterOfMass.y < CAPTURE_HEIGHT * jumpMinYRatio) {
         actionsForFrame.push_back(Ramayana::InputAction::JUMP);
       }
-      if (maxCenterOfMass.x > (CAPTURE_WIDTH * 3 / 4)) {
+      if (smoothedCenterOfMass.x > CAPTURE_WIDTH * moveRightMinXRatio) {
         actionsForFrame.push_back(Ramayana::InputAction::MOVE_RIGHT);
       }
-
   }
 
   area = maxArea;

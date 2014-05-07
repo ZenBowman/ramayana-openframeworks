@@ -34,6 +34,7 @@ private:
   static const int bufferSize = 256;
   ofSoundStream soundStream;
   long long lastElapsedTime;
+  std::vector<float> soundBuffer;
 
   ofVideoGrabber cam;
   ofPixels background;
