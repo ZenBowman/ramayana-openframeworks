@@ -6,9 +6,6 @@
 
 Ramayana::PlayerMovementRecognizer movementRecognizer;
 
-const int SUBWINDOW_SIZE_X = 200;
-const int SUBWINDOW_SIZE_Y = 150;
-
 void debug(std::string msg) { ofLog(OF_LOG_NOTICE, msg); }
 
 //--------------------------------------------------------------
@@ -21,8 +18,8 @@ void ofApp::setup() {
   cam.initGrabber(CAPTURE_WIDTH, CAPTURE_HEIGHT, false);
 
   auto playerInitialPosition = ofPoint(0, 20, 0);
-  auto gameBounds = ofRectangle(0, SUBWINDOW_SIZE_Y, windowSize.x,
-                                windowSize.y - SUBWINDOW_SIZE_Y);
+  auto gameBounds = ofRectangle(0, 0, windowSize.x,
+                                windowSize.y);
   game = std::unique_ptr<Ramayana::Game>(
       new Ramayana::Game(playerInitialPosition, gameBounds));
 

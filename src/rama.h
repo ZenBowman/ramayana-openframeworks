@@ -53,6 +53,8 @@ private:
   ofxLabel positionY;
   ofxLabel velocityX;
   ofxLabel velocityY;
+
+  ofxLabel debug;
 };
 
 }

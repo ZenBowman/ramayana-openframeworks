@@ -45,15 +45,15 @@ void Game::update(std::vector<Ramayana::InputAction> &movesForFrame,
 
 void Game::draw(const long long &timeElapsed) {
   const double scaleFactor =
-      (double) WINDOW_HEIGHT / (double) backgroundImage.getHeight();
+      (double) bounds.height / (double) backgroundImage.getHeight();
   //ofLogNotice() << "Scale factor = " << scaleFactor;
   backgroundImage.draw(0, 0,
-                       backgroundImage.getWidth() * scaleFactor, WINDOW_HEIGHT);
+                       backgroundImage.getWidth() * scaleFactor, bounds.height);
   rama.draw(timeElapsed, bounds, bottomLeft);
 
   for (const auto &block : blocks) {
     block.texture.draw(block.bounds.x - bottomLeft.x,
-                       WINDOW_HEIGHT - block.bounds.y - block.bounds.height,
+                       bounds.height - block.bounds.y - block.bounds.height,
                        block.bounds.width, block.bounds.height);
   }
 

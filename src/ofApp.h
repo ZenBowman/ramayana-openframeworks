@@ -31,7 +31,7 @@ public:
   void audioIn(float * input, int bufferSize, int nChannels) override;
 
 private:
-  static const int bufferSize = 256;
+  static const int bufferSize = 512;
   ofSoundStream soundStream;
   long long lastElapsedTime;
   std::vector<float> soundBuffer;

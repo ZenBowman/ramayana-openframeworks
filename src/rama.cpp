@@ -149,16 +149,16 @@ void Rama::update(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed) {
 
 void Rama::draw(const long long &timeElapsed, ofRectangle &bounds,
                 ofPoint &bottomLeft) {
-  gui.draw();
+
   if (state == RamaState::IDLE) {
     ramaIdle.draw(
         position.x - bottomLeft.x,
-        bounds.y + bounds.height - RAMA_HEIGHT - position.y + bottomLeft.y,
+        bounds.height - RAMA_HEIGHT - position.y - bottomLeft.y,
         RAMA_WIDTH, RAMA_HEIGHT);
   } else if (state == RamaState::JUMPING) {
     ramaIdle.draw(
         position.x - bottomLeft.x,
-        bounds.y + bounds.height - RAMA_HEIGHT - position.y + bottomLeft.y,
+        bounds.height - RAMA_HEIGHT - position.y - bottomLeft.y,
         RAMA_WIDTH, RAMA_HEIGHT);
   } else if (state == RamaState::WALKING) {
     const int timeElapsedPeriod = timeElapsed % 600;
@@ -166,7 +166,7 @@ void Rama::draw(const long long &timeElapsed, ofRectangle &bounds,
     if (timeElapsedPeriod > 450) {
       ramaWalk1.draw(
           position.x - bottomLeft.x,
-          bounds.y + bounds.height - RAMA_HEIGHT - position.y + bottomLeft.y,
+          bounds.y + bounds.height - RAMA_HEIGHT - position.y - bottomLeft.y,
           RAMA_WIDTH, RAMA_HEIGHT);
     } else if (timeElapsedPeriod > 300) {
       ramaWalk2.draw(
