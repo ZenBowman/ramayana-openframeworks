@@ -121,8 +121,14 @@ void ofApp::draw() {
   ofSetLineWidth(3);
 
   ofBeginShape();
-  for (unsigned int i = 0; i < soundBuffer.size(); i++) {
-    ofVertex(i, 100 - soundBuffer[i] * 250.0f);
+  const int soundBufferSize = soundBuffer.size();
+  unsigned int i = 0;
+  unsigned int originalI = 0;
+  if (soundBufferSize > subWindowSize.x) {
+    originalI = i = soundBufferSize - subWindowSize.x;
+  }
+  for (i; i < soundBufferSize; i++) {
+    ofVertex(i - originalI, 100 - soundBuffer[i] * 500.0f);
   }
   ofEndShape(false);
 
