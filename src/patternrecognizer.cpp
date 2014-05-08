@@ -11,8 +11,8 @@ using namespace MatrixOperations;
 RednessFilter rednessFilter(80, 1.25);
 const int rednessFilterMinArea = 2500;
 
-constexpr double moveRightMinXRatio = 3.0/4;
-constexpr double jumpMinYRatio = 2.0/5;
+constexpr double moveRightMinXRatio = 5.0/7;
+constexpr double jumpMinYRatio = 1.0/3;
 
 void MoveLine::draw() {
   ofLine(x1, y1, x2, y2);
@@ -24,6 +24,7 @@ void PlayerMovementRecognizer::draw() {
   ofSetColor(255);
   ofCircle(bounds.x + smoothedCenterOfMass.x * xScale, smoothedCenterOfMass.y * yScale, 5);
   rightMoveLine.draw();
+  leftMoveLine.draw();
   jumpLine.draw();
 }
 
@@ -37,6 +38,11 @@ void PlayerMovementRecognizer::configure(const ofRectangle &bounds) {
 
   xScale = (double) bounds.width / CAPTURE_WIDTH;
   yScale = (double) bounds.height / CAPTURE_HEIGHT;
+
+
+  leftMoveLine.x1 = leftMoveLine.x2 = bounds.x + (1-moveRightMinXRatio) * bounds.width;
+  leftMoveLine.y1 = bounds.y;
+  leftMoveLine.y2 = bounds.y + bounds.height;
 
   rightMoveLine.x1 = rightMoveLine.x2 = bounds.x + moveRightMinXRatio * bounds.width;
   rightMoveLine.y1 = bounds.y;
@@ -86,6 +92,9 @@ PlayerMovementRecognizer::provideActions(cv::Mat &sourceImage) {
       }
       if (smoothedCenterOfMass.x > CAPTURE_WIDTH * moveRightMinXRatio) {
         actionsForFrame.push_back(Ramayana::InputAction::MOVE_RIGHT);
+      }
+      if (smoothedCenterOfMass.x < CAPTURE_WIDTH * (1-moveRightMinXRatio)) {
+        actionsForFrame.push_back(Ramayana::InputAction::MOVE_LEFT);
       }
   }
 

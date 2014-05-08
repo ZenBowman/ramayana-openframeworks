@@ -18,15 +18,12 @@ Game::Game(ofPoint initialPlayerPosition, ofRectangle gameBounds)
 
   blocks.push_back(Block(ofRectangle(300, 100, 100, 50), blockImages[0]));
 
-  blocks.push_back(Block(ofRectangle(550, 0, 100, 50), blockImages[0]));
   blocks.push_back(Block(ofRectangle(550, 50, 100, 50), blockImages[0]));
   blocks.push_back(Block(ofRectangle(550, 100, 100, 50), blockImages[0]));
 
-
-  blocks.push_back(Block(ofRectangle(900, 0, 100, 50), blockImages[0]));
-  blocks.push_back(Block(ofRectangle(900, 50, 100, 50), blockImages[0]));
-  blocks.push_back(Block(ofRectangle(900, 100, 100, 50), blockImages[0]));
-  blocks.push_back(Block(ofRectangle(900, 150, 100, 50), blockImages[0]));
+  blocks.push_back(Block(ofRectangle(1200, 25, 100, 50), blockImages[0]));
+  blocks.push_back(Block(ofRectangle(1200, 75, 100, 50), blockImages[0]));
+  blocks.push_back(Block(ofRectangle(1200, 125, 100, 50), blockImages[0]));
 
 }
 

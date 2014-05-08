@@ -56,6 +56,7 @@ private:
   double xScale;
   double yScale;
 
+  MoveLine leftMoveLine;
   MoveLine rightMoveLine;
   MoveLine jumpLine;
 };
