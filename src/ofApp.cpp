@@ -18,8 +18,7 @@ void ofApp::setup() {
   cam.initGrabber(CAPTURE_WIDTH, CAPTURE_HEIGHT, false);
 
   auto playerInitialPosition = ofPoint(0, 20, 0);
-  auto gameBounds = ofRectangle(0, 0, windowSize.x,
-                                windowSize.y);
+  auto gameBounds = ofRectangle(0, 0, windowSize.x, windowSize.y);
   game = std::unique_ptr<Ramayana::Game>(
       new Ramayana::Game(playerInitialPosition, gameBounds));
 
@@ -88,6 +87,9 @@ void ofApp::update() {
     if (keyDown[KeyMap::KEY_UP]) {
       actionsForFrame.push_back(Ramayana::InputAction::JUMP);
     }
+    if (keyDown[KeyMap::KEY_LEFT]) {
+      actionsForFrame.push_back(Ramayana::InputAction::MOVE_LEFT);
+    }
     auto actions = movementRecognizer.provideActions(frameMat);
     actionsForFrame.insert(actionsForFrame.end(), actions.begin(),
                            actions.end());
@@ -140,6 +142,8 @@ void ofApp::keyPressed(int key) {
     keyDown[KeyMap::KEY_RIGHT] = true;
   } else if (key == OF_KEY_UP) {
     keyDown[KeyMap::KEY_UP] = true;
+  } else if (key == OF_KEY_LEFT) {
+    keyDown[KeyMap::KEY_LEFT] = true;
   }
 }
 
@@ -149,6 +153,8 @@ void ofApp::keyReleased(int key) {
     keyDown[KeyMap::KEY_RIGHT] = false;
   } else if (key == OF_KEY_UP) {
     keyDown[KeyMap::KEY_UP] = false;
+  } else if (key == OF_KEY_LEFT) {
+    keyDown[KeyMap::KEY_LEFT] = false;
   }
 }
 

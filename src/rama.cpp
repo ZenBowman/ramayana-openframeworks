@@ -10,22 +10,26 @@ using namespace MatrixOperations;
 namespace Ramayana {
 
 const int RAMA_WIDTH = 100;
-const int RAMA_HEIGHT = 100;
+const int RAMA_HEIGHT = 150;
 
 const int MAX_JUMP_HEIGHT = 200;
 const int MIN_Y_POSITION = 20;
 const double SCALE_FACTOR = 0.05;
 const int JUMP_VELOCITY_X = 3;
 const int JUMP_VELOCITY_Y = 20;
+constexpr int IMAGE_PIXEL_ADJUSTMENT = 5;
 
 Rama::Rama(ofPoint initialPosition)
     : position(initialPosition), speed(5), velocity(ofVec2f(0, 0)),
       onBlock(false), weightBearingBlock(nullptr) {
   ramaIdle.loadImage("ramaIdle.png");
-  ramaWalk1.loadImage("ramaWalk1.png");
-  ramaWalk2.loadImage("ramaWalk2.png");
-  ramaWalk3.loadImage("ramaWalk3.png");
-  ramaWalk4.loadImage("ramaWalk4.png");
+  ramaWalk1.loadImage("ramaWalking1.png");
+  ramaWalk2.loadImage("ramaWalking2.png");
+  ramaWalk3.loadImage("ramaWalking3.png");
+  ramaWalk4.loadImage("ramaWalking4.png");
+  ramaWalk5.loadImage("ramaWalking5.png");
+  ramaWalk6.loadImage("ramaWalking6.png");
+  ramaJumping.loadImage("ramaJumping.png");
 
   gui.setup();
   gui.add(positionX.setup("X", ""));
@@ -39,10 +43,10 @@ Rama::~Rama() {}
 
 ofRectangle boundingBoxFor(const ofPoint &position) {
   ofRectangle bb;
-  bb.x = position.x;
-  bb.y = position.y;
-  bb.width = RAMA_WIDTH;
-  bb.height = RAMA_HEIGHT;
+  bb.x = position.x + 10;
+  bb.y = position.y - 10;
+  bb.width = RAMA_WIDTH - 20;
+  bb.height = RAMA_HEIGHT - 20;
   return bb;
 }
 
@@ -58,6 +62,8 @@ void Rama::updateJumping(bool *moves, BlockVect &blocks,
         RelativeDirection direction =
             getRelativePosition(boundingBoxFor(position), block.bounds);
         if (direction.isAbove) {
+          velocity.x = 0;
+          velocity.y = 0;
           position.y = block.bounds.y + block.bounds.height;
           state = RamaState::IDLE;
           onBlock = true;
@@ -111,8 +117,20 @@ void Rama::updateWalking(bool *moves, BlockVect &blocks,
       }
     }
   }
+  if (moves[InputAction::MOVE_LEFT]) {
+    state = RamaState::WALKING;
+    position.x -= timeElapsed * speed * SCALE_FACTOR;
+    for (const auto &block : blocks) {
+      if (onBlock && weightBearingBlock == (&block)) {
+        continue;
+      }
+      if (doesCollide(boundingBoxFor(position), block.bounds)) {
+        position.x = block.bounds.x + block.bounds.width;
+      }
+    }
+  }
 
-  if (!moves[InputAction::MOVE_RIGHT]) {
+  if (!(moves[InputAction::MOVE_RIGHT] || moves[InputAction::MOVE_LEFT]) ) {
     state = RamaState::IDLE;
   }
 }
@@ -131,6 +149,10 @@ void Rama::updateIdle(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed) {
     state = RamaState::WALKING;
     position.x += timeElapsed * speed * SCALE_FACTOR;
   }
+  if (moves[InputAction::MOVE_LEFT]) {
+    state = RamaState::WALKING;
+    position.x -= timeElapsed * speed * SCALE_FACTOR;
+  }
 }
 
 void Rama::update(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed) {
@@ -147,43 +169,52 @@ void Rama::update(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed) {
   }
 }
 
+void Rama::drawRama(ofImage &image, ofRectangle &bounds, ofPoint &bottomLeft) {
+  image.draw(position.x - bottomLeft.x,
+                bounds.height - RAMA_HEIGHT - position.y - bottomLeft.y + IMAGE_PIXEL_ADJUSTMENT,
+                RAMA_WIDTH, RAMA_HEIGHT);
+}
+
+void Rama::drawIdle(const long long &timeElapsed, ofRectangle &bounds,
+                    ofPoint &bottomLeft) {
+  drawRama(ramaIdle, bounds, bottomLeft);
+}
+
+void Rama::drawJumping(const long long &timeElapsed, ofRectangle &bounds,
+                       ofPoint &bottomLeft) {
+  drawRama(ramaJumping, bounds, bottomLeft);
+}
+
+void Rama::drawWalking(const long long &timeElapsed, ofRectangle &bounds,
+                       ofPoint &bottomLeft) {
+  constexpr int cycleTime = 1000;
+  constexpr float periodLength = (1.0/6) * cycleTime;
+  const int timeElapsedPeriod = timeElapsed % cycleTime;
+
+  if (timeElapsedPeriod > (5 * periodLength)) {
+    drawRama(ramaWalk1, bounds, bottomLeft);
+  } else if (timeElapsedPeriod > (4 * periodLength)) {
+    drawRama(ramaWalk2, bounds, bottomLeft);
+  } else if (timeElapsedPeriod > (3 * periodLength)) {
+    drawRama(ramaWalk3, bounds, bottomLeft);
+  } else if (timeElapsedPeriod > (2 * periodLength)) {
+    drawRama(ramaWalk4, bounds, bottomLeft);
+  } else if (timeElapsedPeriod > (1 * periodLength)) {
+    drawRama(ramaWalk5, bounds, bottomLeft);
+  } else {
+    drawRama(ramaWalk6, bounds, bottomLeft);
+  }
+}
+
 void Rama::draw(const long long &timeElapsed, ofRectangle &bounds,
                 ofPoint &bottomLeft) {
 
   if (state == RamaState::IDLE) {
-    ramaIdle.draw(
-        position.x - bottomLeft.x,
-        bounds.height - RAMA_HEIGHT - position.y - bottomLeft.y,
-        RAMA_WIDTH, RAMA_HEIGHT);
+    drawIdle(timeElapsed, bounds, bottomLeft);
   } else if (state == RamaState::JUMPING) {
-    ramaIdle.draw(
-        position.x - bottomLeft.x,
-        bounds.height - RAMA_HEIGHT - position.y - bottomLeft.y,
-        RAMA_WIDTH, RAMA_HEIGHT);
+    drawJumping(timeElapsed, bounds, bottomLeft);
   } else if (state == RamaState::WALKING) {
-    const int timeElapsedPeriod = timeElapsed % 600;
-
-    if (timeElapsedPeriod > 450) {
-      ramaWalk1.draw(
-          position.x - bottomLeft.x,
-          bounds.y + bounds.height - RAMA_HEIGHT - position.y - bottomLeft.y,
-          RAMA_WIDTH, RAMA_HEIGHT);
-    } else if (timeElapsedPeriod > 300) {
-      ramaWalk2.draw(
-          position.x - bottomLeft.x,
-          bounds.y + bounds.height - RAMA_HEIGHT - position.y + bottomLeft.y,
-          RAMA_WIDTH, RAMA_HEIGHT);
-    } else if (timeElapsedPeriod > 150) {
-      ramaWalk3.draw(
-          position.x - bottomLeft.x,
-          bounds.y + bounds.height - RAMA_HEIGHT - position.y + bottomLeft.y,
-          RAMA_WIDTH, RAMA_HEIGHT);
-    } else {
-      ramaWalk4.draw(
-          position.x - bottomLeft.x,
-          bounds.y + bounds.height - RAMA_HEIGHT - position.y + bottomLeft.y,
-          RAMA_WIDTH, RAMA_HEIGHT);
-    }
+    drawWalking(timeElapsed, bounds, bottomLeft);
   }
 }
 

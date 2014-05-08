@@ -9,7 +9,8 @@
 
 enum KeyMap {
     KEY_RIGHT = 0,
-    KEY_UP = 1
+    KEY_UP = 1,
+    KEY_LEFT = 2
 };
 
 class ofApp : public ofBaseApp {

@@ -12,7 +12,7 @@ RednessFilter rednessFilter(80, 1.25);
 const int rednessFilterMinArea = 2500;
 
 constexpr double moveRightMinXRatio = 3.0/4;
-constexpr double jumpMinYRatio = 1.0/3;
+constexpr double jumpMinYRatio = 2.0/5;
 
 void MoveLine::draw() {
   ofLine(x1, y1, x2, y2);

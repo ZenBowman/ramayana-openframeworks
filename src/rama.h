@@ -33,6 +33,13 @@ private:
   void updateWalking(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed);
   void updateJumping(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed);
 
+
+  void drawIdle(TimeMillis &timeElapsed, ofRectangle &bounds, ofPoint &bottomLeft);
+  void drawWalking(TimeMillis &timeElapsed, ofRectangle &bounds, ofPoint &bottomLeft);
+  void drawJumping(TimeMillis &timeElapsed, ofRectangle &bounds, ofPoint &bottomLeft);
+
+  void drawRama(ofImage &image, ofRectangle &bounds, ofPoint &bottomLeft);
+
   friend class IdleStateBehavior;
 
   RamaState state;
@@ -42,6 +49,9 @@ private:
   ofImage ramaWalk2;
   ofImage ramaWalk3;
   ofImage ramaWalk4;
+  ofImage ramaWalk5;
+  ofImage ramaWalk6;
+  ofImage ramaJumping;
 
   bool onBlock;
   Block *weightBearingBlock;
