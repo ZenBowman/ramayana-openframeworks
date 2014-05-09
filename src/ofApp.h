@@ -6,6 +6,8 @@
 #include "game.h"
 #include "patternrecognizer.h"
 #include "constants.h"
+#include <complex.h>
+#include <fftw3.h>
 
 enum KeyMap {
     KEY_RIGHT = 0,
@@ -15,6 +17,7 @@ enum KeyMap {
 
 class ofApp : public ofBaseApp {
 public:
+  ~ofApp();
   void setup();
   void update();
   void draw();
@@ -32,6 +35,8 @@ public:
   void audioIn(float * input, int bufferSize, int nChannels) override;
 
 private:
+  void getAudioFFT();
+
   static const int bufferSize = 512;
   ofSoundStream soundStream;
   long long lastElapsedTime;
@@ -53,5 +58,10 @@ private:
   float left[bufferSize];
   float right[bufferSize];
 
+  fftw_complex fftIn[bufferSize];
+  fftw_complex fftOut[bufferSize];
+
   bool keyDown[4];
+
+  fftw_plan fftPlan;
 };

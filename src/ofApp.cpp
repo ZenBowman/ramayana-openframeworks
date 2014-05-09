@@ -4,9 +4,14 @@
 #include "colorfilters.h"
 #include "portaudio.h"
 
+
 Ramayana::PlayerMovementRecognizer movementRecognizer;
 
 void debug(std::string msg) { ofLog(OF_LOG_NOTICE, msg); }
+
+ofApp::~ofApp(){
+  fftw_destroy_plan(fftPlan);
+}
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -26,6 +31,8 @@ void ofApp::setup() {
       ofRectangle(subWindowSize.x, 0, subWindowSize.x, subWindowSize.y));
 
   soundStream.setup(this, 0, 2, 44100, bufferSize, 4);
+
+  fftPlan = fftw_plan_dft_1d(bufferSize, fftIn, fftOut, FFTW_FORWARD, FFTW_ESTIMATE);
 }
 
 void ofApp::audioIn(float *input, int bufferSize, int nChannels) {
@@ -56,6 +63,12 @@ void ofApp::audioIn(float *input, int bufferSize, int nChannels) {
   if (soundBuffer.size() > bufferSize) {
     soundBuffer.erase(soundBuffer.begin());
   }
+}
+
+void ofApp::getAudioFFT() {
+  // insert elements into fftIn here
+  fftw_execute(fftPlan);
+  // extract elements from fftOut here
 }
 
 //--------------------------------------------------------------

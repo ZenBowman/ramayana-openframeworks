@@ -39,7 +39,7 @@ public:
   void configure(const ofRectangle &bounds) override;
   std::vector<InputAction> provideActions(cv::Mat &sourceImage) override;
 private:
-  static constexpr int centerOfMassHistorySize = 7;
+  static constexpr int centerOfMassHistorySize = 5;
   static constexpr double smoothedContributionFactor = 1/ (double) centerOfMassHistorySize;
 
   ofRectangle bounds;

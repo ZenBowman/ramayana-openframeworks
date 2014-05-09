@@ -8,7 +8,7 @@ using namespace std;
 using namespace Ramayana;
 using namespace MatrixOperations;
 
-RednessFilter rednessFilter(80, 1.25);
+RednessFilter rednessFilter(80, 1.5);
 const int rednessFilterMinArea = 2500;
 
 constexpr double moveRightMinXRatio = 5.0/7;
