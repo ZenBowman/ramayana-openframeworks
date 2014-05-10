@@ -45,8 +45,12 @@ void ofApp::audioIn(float *input, int bufferSize, int nChannels) {
   //lets go through each sample and calculate the root mean square which is a
   //rough way to calculate volume
   for (int i = 0; i < bufferSize; i++) {
+
     left[i] = input[i * 2] * 0.5;
     right[i] = input[i * 2 + 1] * 0.5;
+
+    fftIn[i][0] = left[i];
+    fftIn[i][1] = 0.0;
 
     curVol += left[i] * left[i];
     curVol += right[i] * right[i];
@@ -69,10 +73,14 @@ void ofApp::getAudioFFT() {
   // insert elements into fftIn here
   fftw_execute(fftPlan);
   // extract elements from fftOut here
+  for (int i = 0; i < bufferSize; i++) {
+    ofLogNotice() << "Frequency[" << i << "] = " << fftOut[i][0] << ", " << fftOut[i][1];
+  }
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
+  getAudioFFT();
   const long long newElapsedTime = ofGetElapsedTimeMillis();
   const long long deltaTime = newElapsedTime - lastElapsedTime;
 
@@ -140,9 +148,14 @@ void ofApp::draw() {
     originalI = i = soundBufferSize - subWindowSize.x;
   }
   for (i; i < soundBufferSize; i++) {
-    ofVertex(i - originalI, 100 - soundBuffer[i] * 500.0f);
+    ofVertex(i - originalI, 50 - soundBuffer[i] * 500.0f);
   }
   ofEndShape(false);
+
+  const int bandWidth = 4;
+  for (i=0; i < bufferSize; i++) {
+    ofRect(i*bandWidth, 200, bandWidth,-(pow(pow(fftOut[i][0],2) + pow(fftOut[i][1], 2), 0.5) * 10));
+  }
 
   ofPopMatrix();
   ofPopStyle();
