@@ -13,7 +13,8 @@ Rakshas::Rakshas(ofPoint _initialPosition, ofPoint _finalPosition, long _period)
   velocity.x = (finalPosition.x - initialPosition.x) / period;
   velocity.y = (finalPosition.y - initialPosition.y) / period;
 
-  rakshasLeft.loadImage("rakshas1.png");
+  rakshasLeft.loadImage("rakshasLeft.png");
+  rakshasRight.loadImage("rakshasRight.png");
 }
 
 Rakshas::~Rakshas() {}
@@ -37,9 +38,20 @@ void Rakshas::update(TimeMillis &timeElapsed) {
   }
 }
 
+ofRectangle Rakshas::getBounds() {
+  return ofRectangle(position.x + 10, position.y = 10, RAKSHAS_WIDTH-20, RAKSHAS_HEIGHT-20);
+}
+
 void Rakshas::draw(ofRectangle &bounds, ofPoint &bottomLeft)
 {
-    rakshasLeft.draw(position.x - bottomLeft.x,
+    ofImage *imageToDraw;
+    if (velocity.x < 0) {
+        imageToDraw = &rakshasLeft;
+    } else {
+        imageToDraw = &rakshasRight;
+    }
+    imageToDraw->draw(position.x - bottomLeft.x,
              bounds.height - RAKSHAS_HEIGHT - position.y - bottomLeft.y,
              RAKSHAS_WIDTH, RAKSHAS_HEIGHT);
-   }
+
+    }
