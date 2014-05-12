@@ -12,10 +12,34 @@ struct Block;
 struct CollidableObjects;
 
 enum class RamaState {
-  IDLE = 0, WALKING, JUMPING
+  IDLE = 0,
+  WALKING,
+  JUMPING,
+  FIRING,
+  FIRED
 };
 
-class Rama;
+enum class ArrowType {
+  NORMAL,
+  BRAHMASTRA
+};
+
+enum class ArrowState {
+  AIRBORNE,
+  GROUNDED
+};
+
+struct Arrow {
+  ArrowType type;
+  ArrowState state;
+
+  ofPoint position;
+  ofImage *image;
+  ofVec2f velocity;
+
+  void draw(ofRectangle &bounds, ofPoint &bottomLeft);
+  void update(TimeMillis &timeElapsed);
+};
 
 class Rama {
 public:
@@ -28,14 +52,27 @@ public:
   ofPoint position;
 
 private:
+  static constexpr int maxHealth = 100;
+  static constexpr long timeInFiringState = 500;
+  static constexpr long timeInFiredState = 250;
 
+  void fireArrow();
+
+  void updateFiring(bool *moves, CollidableObjects &collidables,
+                  TimeMillis &timeElapsed);
   void updateIdle(bool *moves, CollidableObjects &collidables,
                   TimeMillis &timeElapsed);
   void updateWalking(bool *moves, CollidableObjects &collidables,
                      TimeMillis &timeElapsed);
   void updateJumping(bool *moves, CollidableObjects &collidables,
                      TimeMillis &timeElapsed);
+  void updateFired(bool *moves, CollidableObjects &collidables,
+                  TimeMillis &timeElapsed);
 
+  void drawFired(TimeMillis &timeElapsed, ofRectangle &bounds,
+                ofPoint &bottomLeft);
+  void drawFiring(TimeMillis &timeElapsed, ofRectangle &bounds,
+                ofPoint &bottomLeft);
   void drawIdle(TimeMillis &timeElapsed, ofRectangle &bounds,
                 ofPoint &bottomLeft);
   void drawWalking(TimeMillis &timeElapsed, ofRectangle &bounds,
@@ -57,6 +94,11 @@ private:
   ofImage ramaWalk5;
   ofImage ramaWalk6;
   ofImage ramaJumping;
+  ofImage ramaFiring;
+  ofImage ramaFired;
+
+  ofImage defaultArrowImage;
+
   double speed;
   bool onBlock;
   Block *weightBearingBlock;
@@ -71,9 +113,12 @@ private:
   ofxLabel debug;
 
   ofxGuiGroup characterHud;
-  static constexpr int maxHealth = 100;
   int health;
   ofxIntSlider healthIndicator;
+
+  long stateTimer;
+
+  std::vector<Arrow> arrowsInFlight;
 };
 
 }

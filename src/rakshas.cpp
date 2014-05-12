@@ -7,8 +7,8 @@ Rakshas::Rakshas(ofPoint _initialPosition, ofPoint _finalPosition, long _period)
     : position(_initialPosition), initialPosition(_initialPosition),
       finalPosition(_finalPosition), period(_period),
       state(RakshasState::MOVING_TOWARDS_FINAL), periodTimeElapsed(0.0) {
-  velocity.x = (finalPosition.x - initialPosition.x) / period;
-  velocity.y = (finalPosition.y - initialPosition.y) / period;
+  velocity.x = static_cast<float>(finalPosition.x - initialPosition.x) / static_cast<float>(period);
+  velocity.y = static_cast<float>(finalPosition.y - initialPosition.y) / static_cast<float>(period);
 
   rakshasLeft.loadImage("rakshasLeft.png");
   rakshasRight.loadImage("rakshasRight.png");
@@ -36,13 +36,13 @@ void Rakshas::update(TimeMillis &timeElapsed) {
 }
 
 ofRectangle Rakshas::getBounds() {
-  return ofRectangle(position.x + 10, position.y = 10, RAKSHAS_WIDTH - 20,
+  return ofRectangle(position.x + 10, position.y - 10, RAKSHAS_WIDTH - 20,
                      RAKSHAS_HEIGHT - 20);
 }
 
 void Rakshas::draw(ofRectangle &bounds, ofPoint &bottomLeft) {
   ofImage *imageToDraw;
-  if (velocity.x < 0) {
+  if (velocity.x <= 0) {
     imageToDraw = &rakshasLeft;
   } else {
     imageToDraw = &rakshasRight;

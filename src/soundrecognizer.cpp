@@ -1,4 +1,62 @@
 #include "soundrecognizer.h"
+#include "ofMain.h"
+#include <complex>
+
+SoundRecognizer::SoundRecognizer(ofPoint _subWindowSize)
+    : subWindowSize(_subWindowSize) {
+  fftPlan =
+      fftw_plan_dft_1d(bufferSize, fftIn, fftOut, FFTW_FORWARD, FFTW_ESTIMATE);
+}
+
+SoundRecognizer::~SoundRecognizer() { fftw_destroy_plan(fftPlan); }
+
+void SoundRecognizer::update() {
+  // insert elements into fftIn here
+  fftw_execute(fftPlan);
+  // extract elements from fftOut here
+  for (int i = 0; i < bufferSize; i++) {
+    ofLogNotice() << "Frequency[" << i << "] = " << fftOut[i][0] << ", "
+                  << fftOut[i][1];
+  }
+}
+
+void SoundRecognizer::draw() {
+  ofPushStyle();
+  ofPushMatrix();
+  ofTranslate(subWindowSize.x * 2, 0, 0);
+
+  ofSetColor(60);
+  ofDrawBitmapString("Left Channel", 4, 18);
+
+  ofSetLineWidth(1);
+  ofRect(0, 0, subWindowSize.x, subWindowSize.y);
+
+  ofSetColor(245, 58, 135);
+  ofSetLineWidth(3);
+
+  ofBeginShape();
+  const int soundBufferSize = soundBuffer.size();
+  unsigned int i = 0;
+  unsigned int originalI = 0;
+  if (soundBufferSize > subWindowSize.x) {
+    originalI = i = soundBufferSize - subWindowSize.x;
+  }
+  for (; i < soundBufferSize; i++) {
+    ofVertex(i - originalI, 50 - soundBuffer[i] * 800.0f);
+  }
+  ofEndShape(false);
+
+  const int bandWidth = 4;
+
+  for (i = 0; i < subWindowSize.x/bandWidth; i++) {
+    std::complex<double> fftOutI(fftOut[i][0], fftOut[i][1]);
+    ofRect(i * bandWidth, 200, bandWidth, - std::abs<double>(fftOutI) * 50);
+  }
+
+  ofPopMatrix();
+  ofPopStyle();
+
+}
 
 void SoundRecognizer::audioIn(float *input, int bufferSize, int nChannels) {
 

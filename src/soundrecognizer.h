@@ -2,13 +2,18 @@
 #define SOUND_RECOGNIZER_H
 
 #include <vector>
-#include <complex.h>
+#include <complex>
 #include <fftw3.h>
+#include "ofMain.h"
 
 class SoundRecognizer {
 public:
   void audioIn(float *input, int bufferSize, int nChannels);
   void draw();
+  void update();
+
+  SoundRecognizer(ofPoint subWindowSize);
+  ~SoundRecognizer();
 
 private:
   static constexpr size_t bufferSize = 512;
@@ -19,6 +24,8 @@ private:
   fftw_complex fftOut[bufferSize];
 
   std::vector<float> soundBuffer;
+  ofPoint subWindowSize;
+  fftw_plan fftPlan;
 
 };
 

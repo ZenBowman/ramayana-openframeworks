@@ -10,7 +10,7 @@ enum InputAction {
   MOVE_RIGHT = 0,
   MOVE_LEFT,
   JUMP,
-
+  FIRE,
   NUM_ACTIONS
 };
 

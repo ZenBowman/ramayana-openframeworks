@@ -12,6 +12,9 @@ namespace Ramayana {
 const int RAMA_WIDTH = 100;
 const int RAMA_HEIGHT = 150;
 
+constexpr int ARROW_WIDTH = 90;
+constexpr int ARROW_HEIGHT = 12;
+
 const int MAX_JUMP_HEIGHT = 200;
 const int MIN_Y_POSITION = 20;
 const double SCALE_FACTOR = 0.05;
@@ -21,8 +24,12 @@ constexpr int IMAGE_PIXEL_ADJUSTMENT = 5;
 constexpr int MAX_RUNNING_VELOCITY = 5;
 
 Rama::Rama(ofPoint initialPosition)
-    : position(initialPosition), speed(5), onBlock(false),
-      weightBearingBlock(nullptr), velocity(ofVec2f(0, 0)), health(100) {
+    : position(initialPosition),
+      speed(5),
+      onBlock(false),
+      weightBearingBlock(nullptr),
+      velocity(ofVec2f(0, 0)),
+      health(100) {
   ramaIdle.loadImage("ramaIdle.png");
   ramaWalk1.loadImage("ramaWalking1.png");
   ramaWalk2.loadImage("ramaWalking2.png");
@@ -31,6 +38,9 @@ Rama::Rama(ofPoint initialPosition)
   ramaWalk5.loadImage("ramaWalking5.png");
   ramaWalk6.loadImage("ramaWalking6.png");
   ramaJumping.loadImage("ramaJumping.png");
+  ramaFiring.loadImage("ramaShooting1.png");
+  ramaFired.loadImage("ramaShooting2.png");
+  defaultArrowImage.loadImage("arrow.png");
 
   gui.setup();
   gui.add(positionX.setup("X", ""));
@@ -55,13 +65,55 @@ ofRectangle boundingBoxFor(const ofPoint &position) {
   return bb;
 }
 
+void Rama::fireArrow() {
+  Arrow arrow;
+  arrow.type = ArrowType::NORMAL;
+  arrow.state = ArrowState::AIRBORNE;
+  arrow.position = position;
+  arrow.position.y += static_cast<float>(RAMA_HEIGHT)/2;
+  arrow.velocity = ofVec2f(1.5f, 0.0f);
+  arrow.image = &defaultArrowImage;
+
+  arrowsInFlight.push_back(arrow);
+}
+
+void Arrow::update(TimeMillis &timeElapsed) {
+  position.x += timeElapsed * velocity.x;
+  position.y += timeElapsed * velocity.y;
+}
+
+void Arrow::draw(ofRectangle &bounds, ofPoint &bottomLeft) {
+ image->draw(position.x - bottomLeft.x,
+                    bounds.height - ARROW_HEIGHT - position.y - bottomLeft.y,
+                    ARROW_WIDTH, ARROW_HEIGHT);
+}
+
+void Rama::updateFiring(bool *moves, CollidableObjects &collidables,
+                         TimeMillis &timeElapsed) {
+    stateTimer += timeElapsed;
+    if (stateTimer > timeInFiringState) {
+      fireArrow();
+      state = RamaState::FIRED;
+      stateTimer = 0;
+    }
+}
+
+void Rama::updateFired(bool *moves, CollidableObjects &collidables,
+                         TimeMillis &timeElapsed) {
+    stateTimer += timeElapsed;
+    if (stateTimer > timeInFiredState) {
+      state = RamaState::IDLE;
+      stateTimer = 0;
+    }
+}
+
 void Rama::updateJumping(bool *moves, CollidableObjects &collidables,
                          TimeMillis &timeElapsed) {
   BlockVect &blocks = collidables.blocks;
   if (state == RamaState::JUMPING) {
     position.x += velocity.x * SCALE_FACTOR * timeElapsed;
     position.y += velocity.y * SCALE_FACTOR * timeElapsed;
-    velocity.y -= SCALE_FACTOR * timeElapsed; // gravity
+    velocity.y -= SCALE_FACTOR * timeElapsed;  // gravity
     for (auto &block : blocks) {
       if (doesCollide(boundingBoxFor(position), block.bounds)) {
         RelativeDirection direction =
@@ -147,6 +199,11 @@ void Rama::updateWalking(bool *moves, CollidableObjects &collidables,
 void Rama::updateIdle(bool *moves, CollidableObjects &collidables,
                       TimeMillis &timeElapsed) {
   BlockVect &blocks = collidables.blocks;
+  if (moves[InputAction::FIRE]) {
+    state = RamaState::FIRING;
+    stateTimer = 0;
+    return;
+  }
   if (moves[InputAction::JUMP]) {
     ofLog(OF_LOG_NOTICE, "Initiating jump");
     state = RamaState::JUMPING;
@@ -168,16 +225,26 @@ void Rama::updateIdle(bool *moves, CollidableObjects &collidables,
 void Rama::update(bool *moves, CollidableObjects &collidables,
                   TimeMillis &timeElapsed) {
   switch (state) {
-  case RamaState::IDLE:
-    updateIdle(moves, collidables, timeElapsed);
-    break;
-  case RamaState::WALKING:
-    updateWalking(moves, collidables, timeElapsed);
-    break;
-  case RamaState::JUMPING:
-    updateJumping(moves, collidables, timeElapsed);
-    break;
+    case RamaState::IDLE:
+      updateIdle(moves, collidables, timeElapsed);
+      break;
+    case RamaState::WALKING:
+      updateWalking(moves, collidables, timeElapsed);
+      break;
+    case RamaState::JUMPING:
+      updateJumping(moves, collidables, timeElapsed);
+      break;
+    case RamaState::FIRING:
+      updateFiring(moves, collidables, timeElapsed);
+      break;
+    case RamaState::FIRED:
+      updateFired(moves, collidables, timeElapsed);
+      break;
   }
+  for (auto &arrow: arrowsInFlight) {
+    arrow.update(timeElapsed);
+  }
+
   for (auto &rakshas : collidables.rakshases) {
     if (doesCollide(boundingBoxFor(position), rakshas.getBounds())) {
       health--;
@@ -192,6 +259,18 @@ void Rama::drawRama(ofImage &image, ofRectangle &bounds, ofPoint &bottomLeft) {
                  IMAGE_PIXEL_ADJUSTMENT,
              RAMA_WIDTH, RAMA_HEIGHT);
 }
+
+void Rama::drawFiring(const long long &timeElapsed, ofRectangle &bounds,
+                    ofPoint &bottomLeft) {
+  drawRama(ramaFiring, bounds, bottomLeft);
+}
+
+
+void Rama::drawFired(const long long &timeElapsed, ofRectangle &bounds,
+                    ofPoint &bottomLeft) {
+  drawRama(ramaFired, bounds, bottomLeft);
+}
+
 
 void Rama::drawIdle(const long long &timeElapsed, ofRectangle &bounds,
                     ofPoint &bottomLeft) {
@@ -238,6 +317,14 @@ void Rama::draw(const long long &timeElapsed, ofRectangle &bounds,
     drawJumping(timeElapsed, bounds, bottomLeft);
   } else if (state == RamaState::WALKING) {
     drawWalking(timeElapsed, bounds, bottomLeft);
+  } else if (state == RamaState::FIRING) {
+    drawFiring(timeElapsed, bounds, bottomLeft);
+  } else if (state == RamaState::FIRED) {
+    drawFired(timeElapsed, bounds, bottomLeft);
+  }
+
+  for (auto &arrow: arrowsInFlight) {
+    arrow.draw(bounds, bottomLeft);
   }
 }
 

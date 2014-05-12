@@ -27,7 +27,7 @@ Game::Game(ofPoint initialPlayerPosition, ofRectangle gameBounds)
   blocks.push_back(Block(ofRectangle(1200, 125, 100, 50), blockImages[0]));
 
   rakshases.push_back(Rakshas(ofPoint(2000, 20), ofPoint(1400, 20), 10000L));
-
+  rakshases.push_back(Rakshas(ofPoint(1000, 20), ofPoint(1000, 420), 10000L));
 }
 
 Game::~Game() {}

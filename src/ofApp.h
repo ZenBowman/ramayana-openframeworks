@@ -8,6 +8,7 @@
 #include "constants.h"
 #include <complex.h>
 #include <fftw3.h>
+#include "soundrecognizer.h"
 
 enum KeyMap {
   KEY_RIGHT = 0,
@@ -17,7 +18,6 @@ enum KeyMap {
 
 class ofApp : public ofBaseApp {
 public:
-  ~ofApp();
   void setup();
   void update();
   void draw();
@@ -35,6 +35,7 @@ public:
   void audioIn(float *input, int bufferSize, int nChannels) override;
 
 private:
+  void resetGame();
   void getAudioFFT();
 
   static const unsigned int bufferSize = 512;
@@ -52,15 +53,15 @@ private:
 
   ofPoint subWindowSize;
   std::unique_ptr<Ramayana::Game> game;
+  std::unique_ptr<SoundRecognizer> soundRecognizer;
   std::vector<Ramayana::InputAction> actionsForFrame;
 
   float left[bufferSize];
   float right[bufferSize];
 
-  fftw_complex fftIn[bufferSize];
-  fftw_complex fftOut[bufferSize];
-
   bool keyDown[4];
+  bool shoot;
 
-  fftw_plan fftPlan;
+  const ofPoint playerInitialPosition = ofPoint(0, 20, 0);
+
 };
