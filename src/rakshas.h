@@ -5,13 +5,11 @@
 #include "constants.h"
 
 enum class RakshasState {
-  MOVING_TOWARDS_FINAL,
-  MOVING_BACK_TOWARDS_INITIAL
+  MOVING_TOWARDS_FINAL, MOVING_BACK_TOWARDS_INITIAL
 };
 
-
 class Rakshas {
- public:
+public:
   void update(TimeMillis &timeElapsed);
   void draw(ofRectangle &bounds, ofPoint &bottomLeft);
   ofRectangle getBounds();
@@ -21,7 +19,7 @@ class Rakshas {
   Rakshas(ofPoint initialPosition, ofPoint finalPosition, long period);
   ~Rakshas();
 
- private:
+private:
   ofPoint position;
   ofPoint initialPosition;
   ofPoint finalPosition;

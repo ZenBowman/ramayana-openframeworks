@@ -17,26 +17,31 @@ enum class RamaState {
 
 class Rama;
 
-
 class Rama {
 public:
   Rama(ofPoint initialPosition);
   ~Rama();
   void draw(TimeMillis &timeElapsed, ofRectangle &bounds, ofPoint &bottomLeft);
-  void update(bool *movesForFrame, CollidableObjects &collidables, TimeMillis &timeElapsed);
+  void update(bool *movesForFrame, CollidableObjects &collidables,
+              TimeMillis &timeElapsed);
 
   ofPoint position;
 
 private:
 
-  void updateIdle(bool *moves, CollidableObjects &collidables, TimeMillis &timeElapsed);
-  void updateWalking(bool *moves, CollidableObjects &collidables, TimeMillis &timeElapsed);
-  void updateJumping(bool *moves, CollidableObjects &collidables, TimeMillis &timeElapsed);
+  void updateIdle(bool *moves, CollidableObjects &collidables,
+                  TimeMillis &timeElapsed);
+  void updateWalking(bool *moves, CollidableObjects &collidables,
+                     TimeMillis &timeElapsed);
+  void updateJumping(bool *moves, CollidableObjects &collidables,
+                     TimeMillis &timeElapsed);
 
-
-  void drawIdle(TimeMillis &timeElapsed, ofRectangle &bounds, ofPoint &bottomLeft);
-  void drawWalking(TimeMillis &timeElapsed, ofRectangle &bounds, ofPoint &bottomLeft);
-  void drawJumping(TimeMillis &timeElapsed, ofRectangle &bounds, ofPoint &bottomLeft);
+  void drawIdle(TimeMillis &timeElapsed, ofRectangle &bounds,
+                ofPoint &bottomLeft);
+  void drawWalking(TimeMillis &timeElapsed, ofRectangle &bounds,
+                   ofPoint &bottomLeft);
+  void drawJumping(TimeMillis &timeElapsed, ofRectangle &bounds,
+                   ofPoint &bottomLeft);
 
   void drawRama(ofImage &image, ofRectangle &bounds, ofPoint &bottomLeft);
 
@@ -55,7 +60,6 @@ private:
   double speed;
   bool onBlock;
   Block *weightBearingBlock;
-
 
   ofVec2f velocity;
   ofxPanel gui;

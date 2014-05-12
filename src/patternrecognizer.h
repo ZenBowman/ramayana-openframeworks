@@ -32,15 +32,16 @@ struct MoveLine {
 
 // Recognizes the biggest red object in the scene and uses
 // it to control left/right movement and jumping
-class PlayerMovementRecognizer : PatternRecognizer
-{
+class PlayerMovementRecognizer : PatternRecognizer {
 public:
   void draw();
   void configure(const ofRectangle &bounds) override;
   std::vector<InputAction> provideActions(cv::Mat &sourceImage) override;
+
 private:
   static constexpr int centerOfMassHistorySize = 5;
-  static constexpr double smoothedContributionFactor = 1/ (double) centerOfMassHistorySize;
+  static constexpr double smoothedContributionFactor =
+      1 / (double) centerOfMassHistorySize;
 
   ofRectangle bounds;
   ofxPanel gui;
@@ -60,7 +61,6 @@ private:
   MoveLine rightMoveLine;
   MoveLine jumpLine;
 };
-
 
 }
 

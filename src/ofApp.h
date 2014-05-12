@@ -10,9 +10,9 @@
 #include <fftw3.h>
 
 enum KeyMap {
-    KEY_RIGHT = 0,
-    KEY_UP = 1,
-    KEY_LEFT = 2
+  KEY_RIGHT = 0,
+  KEY_UP = 1,
+  KEY_LEFT = 2
 };
 
 class ofApp : public ofBaseApp {
@@ -32,7 +32,7 @@ public:
   void dragEvent(ofDragInfo dragInfo);
   void gotMessage(ofMessage msg);
   void colorDominationFactorChanged(float &cdf);
-  void audioIn(float * input, int bufferSize, int nChannels) override;
+  void audioIn(float *input, int bufferSize, int nChannels) override;
 
 private:
   void getAudioFFT();
@@ -49,7 +49,6 @@ private:
   cv::Mat backgroundMat;
   ofxPanel gui;
   ofxFloatSlider colorDominationFactorSlider;
-
 
   ofPoint subWindowSize;
   std::unique_ptr<Ramayana::Game> game;

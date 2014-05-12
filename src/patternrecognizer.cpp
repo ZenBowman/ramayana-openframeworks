@@ -57,8 +57,8 @@ void PlayerMovementRecognizer::configure(const ofRectangle &bounds) {
   }
 }
 
-vector<InputAction> PlayerMovementRecognizer::provideActions(
-    cv::Mat &sourceImage) {
+vector<InputAction>
+PlayerMovementRecognizer::provideActions(cv::Mat &sourceImage) {
   vector<InputAction> actionsForFrame;
 
   cv::Mat newMat = applyPixelFilter(sourceImage, rednessFilter);

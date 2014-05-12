@@ -19,7 +19,8 @@ typedef std::vector<Block> BlockVect;
 struct CollidableObjects {
   BlockVect &blocks;
   RakshasVect &rakshases;
-  CollidableObjects(BlockVect &_blocks, RakshasVect &_rakshases) : blocks(_blocks), rakshases(_rakshases) {}
+  CollidableObjects(BlockVect &_blocks, RakshasVect &_rakshases)
+      : blocks(_blocks), rakshases(_rakshases) {}
 };
 
 class Game {

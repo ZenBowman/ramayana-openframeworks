@@ -8,8 +8,7 @@ Block::Block(ofRectangle _bounds, ofImage &_texture)
     : bounds(_bounds), texture(_texture) {}
 
 Game::Game(ofPoint initialPlayerPosition, ofRectangle gameBounds)
-    : bottomLeft(ofPoint(0, 0, 0)),
-      bounds(gameBounds),
+    : bottomLeft(ofPoint(0, 0, 0)), bounds(gameBounds),
       rama(initialPlayerPosition) {
 
   // Later on all these should be loaded from instances of Level objects
@@ -36,7 +35,7 @@ Game::~Game() {}
 void Game::update(std::vector<Ramayana::InputAction> &movesForFrame,
                   const long long &timeElapsed) {
 
-CollidableObjects collidables(blocks, rakshases);
+  CollidableObjects collidables(blocks, rakshases);
   for (int i = 0; i < InputAction::NUM_ACTIONS; i++) {
     actionsEnabled[i] = false;
   }
@@ -45,7 +44,7 @@ CollidableObjects collidables(blocks, rakshases);
     actionsEnabled[inputAction] = true;
   }
 
-  for (auto &rakshas: rakshases) {
+  for (auto &rakshas : rakshases) {
     rakshas.update(timeElapsed);
   }
 
@@ -64,7 +63,7 @@ void Game::draw(const long long &timeElapsed) {
                        bounds.height);
   rama.draw(timeElapsed, bounds, bottomLeft);
 
-  for (auto &rakshas: rakshases) {
+  for (auto &rakshas : rakshases) {
     rakshas.draw(bounds, bottomLeft);
   }
 
