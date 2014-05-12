@@ -3,6 +3,9 @@ ramayana-openframeworks
 
 A game based on the Indian Epic Ramayana that uses video and audio input to control the player.
 
+Video
+=====
+[![Ramayana-openFrameworks](http://img.youtube.com/vi/iai72LhlcZA/0.jpg)](http://www.youtube.com/watch?v=iai72LhlcZA)
 
 Credits
 =======
