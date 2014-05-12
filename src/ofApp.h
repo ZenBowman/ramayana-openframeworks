@@ -37,7 +37,7 @@ public:
 private:
   void getAudioFFT();
 
-  static const int bufferSize = 512;
+  static const unsigned int bufferSize = 512;
   ofSoundStream soundStream;
   long long lastElapsedTime;
   std::vector<float> soundBuffer;

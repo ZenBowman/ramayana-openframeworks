@@ -12,4 +12,6 @@ constexpr int SUBWINDOW_SIZE_Y = WINDOW_HEIGHT/3;
 
 void debug(std::string msg);
 
+typedef const long long TimeMillis;
+
 #endif

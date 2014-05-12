@@ -20,8 +20,12 @@ const int JUMP_VELOCITY_Y = 20;
 constexpr int IMAGE_PIXEL_ADJUSTMENT = 5;
 
 Rama::Rama(ofPoint initialPosition)
-    : position(initialPosition), speed(5), velocity(ofVec2f(0, 0)),
-      onBlock(false), weightBearingBlock(nullptr) {
+    : position(initialPosition),
+      speed(5),
+      onBlock(false),
+      weightBearingBlock(nullptr),
+      velocity(ofVec2f(0, 0)),
+      health(100) {
   ramaIdle.loadImage("ramaIdle.png");
   ramaWalk1.loadImage("ramaWalking1.png");
   ramaWalk2.loadImage("ramaWalking2.png");
@@ -37,6 +41,10 @@ Rama::Rama(ofPoint initialPosition)
   gui.add(velocityX.setup("Velocity.X", ""));
   gui.add(velocityY.setup("Velocity.Y", ""));
   gui.setPosition(initialPosition);
+
+  characterHud.setup();
+  characterHud.setPosition(position);
+  characterHud.add(healthIndicator.setup("Health", health, 0, maxHealth));
 }
 
 Rama::~Rama() {}
@@ -50,13 +58,13 @@ ofRectangle boundingBoxFor(const ofPoint &position) {
   return bb;
 }
 
-void Rama::updateJumping(bool *moves, BlockVect &blocks,
+void Rama::updateJumping(bool *moves, CollidableObjects &collidables,
                          TimeMillis &timeElapsed) {
+  BlockVect &blocks = collidables.blocks;
   if (state == RamaState::JUMPING) {
-    const ofPoint oldPosition = position;
     position.x += velocity.x * SCALE_FACTOR * timeElapsed;
     position.y += velocity.y * SCALE_FACTOR * timeElapsed;
-    velocity.y -= SCALE_FACTOR * timeElapsed; // gravity
+    velocity.y -= SCALE_FACTOR * timeElapsed;  // gravity
     for (auto &block : blocks) {
       if (doesCollide(boundingBoxFor(position), block.bounds)) {
         RelativeDirection direction =
@@ -84,8 +92,9 @@ void Rama::updateJumping(bool *moves, BlockVect &blocks,
   }
 }
 
-void Rama::updateWalking(bool *moves, BlockVect &blocks,
+void Rama::updateWalking(bool *moves, CollidableObjects &collidables,
                          TimeMillis &timeElapsed) {
+BlockVect &blocks = collidables.blocks;
   if (onBlock) {
     if (!doesCollide(boundingBoxFor(position), weightBearingBlock->bounds)) {
       velocity.x = 0;
@@ -130,13 +139,13 @@ void Rama::updateWalking(bool *moves, BlockVect &blocks,
     }
   }
 
-  if (!(moves[InputAction::MOVE_RIGHT] || moves[InputAction::MOVE_LEFT]) ) {
+  if (!(moves[InputAction::MOVE_RIGHT] || moves[InputAction::MOVE_LEFT])) {
     state = RamaState::IDLE;
   }
 }
 
-void Rama::updateIdle(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed) {
-
+void Rama::updateIdle(bool *moves, CollidableObjects &collidables, TimeMillis &timeElapsed) {
+BlockVect &blocks = collidables.blocks;
   if (moves[InputAction::JUMP]) {
     ofLog(OF_LOG_NOTICE, "Initiating jump");
     state = RamaState::JUMPING;
@@ -155,24 +164,25 @@ void Rama::updateIdle(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed) {
   }
 }
 
-void Rama::update(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed) {
+void Rama::update(bool *moves, CollidableObjects &collidables, TimeMillis &timeElapsed) {
   switch (state) {
-  case RamaState::IDLE:
-    updateIdle(moves, blocks, timeElapsed);
-    break;
-  case RamaState::WALKING:
-    updateWalking(moves, blocks, timeElapsed);
-    break;
-  case RamaState::JUMPING:
-    updateJumping(moves, blocks, timeElapsed);
-    break;
+    case RamaState::IDLE:
+      updateIdle(moves, collidables, timeElapsed);
+      break;
+    case RamaState::WALKING:
+      updateWalking(moves, collidables, timeElapsed);
+      break;
+    case RamaState::JUMPING:
+      updateJumping(moves, collidables, timeElapsed);
+      break;
   }
 }
 
 void Rama::drawRama(ofImage &image, ofRectangle &bounds, ofPoint &bottomLeft) {
   image.draw(position.x - bottomLeft.x,
-                bounds.height - RAMA_HEIGHT - position.y - bottomLeft.y + IMAGE_PIXEL_ADJUSTMENT,
-                RAMA_WIDTH, RAMA_HEIGHT);
+             bounds.height - RAMA_HEIGHT - position.y - bottomLeft.y +
+                 IMAGE_PIXEL_ADJUSTMENT,
+             RAMA_WIDTH, RAMA_HEIGHT);
 }
 
 void Rama::drawIdle(const long long &timeElapsed, ofRectangle &bounds,
@@ -188,7 +198,7 @@ void Rama::drawJumping(const long long &timeElapsed, ofRectangle &bounds,
 void Rama::drawWalking(const long long &timeElapsed, ofRectangle &bounds,
                        ofPoint &bottomLeft) {
   constexpr int cycleTime = 1000;
-  constexpr float periodLength = (1.0/6) * cycleTime;
+  constexpr float periodLength = (1.0 / 6) * cycleTime;
   const int timeElapsedPeriod = timeElapsed % cycleTime;
 
   if (timeElapsedPeriod > (5 * periodLength)) {
@@ -209,6 +219,10 @@ void Rama::drawWalking(const long long &timeElapsed, ofRectangle &bounds,
 void Rama::draw(const long long &timeElapsed, ofRectangle &bounds,
                 ofPoint &bottomLeft) {
 
+  healthIndicator.setPosition(position.x - bottomLeft.x, bounds.height - 200 - position.y);
+  healthIndicator.draw();
+  //characterHud.setPosition(position.x, 500 - position.y);
+  //characterHud.draw();
   if (state == RamaState::IDLE) {
     drawIdle(timeElapsed, bounds, bottomLeft);
   } else if (state == RamaState::JUMPING) {

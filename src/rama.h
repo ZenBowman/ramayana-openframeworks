@@ -4,10 +4,12 @@
 #include "ofMain.h"
 #include "patternrecognizer.h"
 #include "ofxGui.h"
+#include "constants.h"
 
 namespace Ramayana {
 
 struct Block;
+struct CollidableObjects;
 
 enum class RamaState {
   IDLE = 0, WALKING, JUMPING
@@ -15,23 +17,21 @@ enum class RamaState {
 
 class Rama;
 
-typedef std::vector<Block> BlockVect;
-typedef const long long TimeMillis;
 
 class Rama {
 public:
   Rama(ofPoint initialPosition);
   ~Rama();
   void draw(TimeMillis &timeElapsed, ofRectangle &bounds, ofPoint &bottomLeft);
-  void update(bool *movesForFrame, BlockVect &blocks, TimeMillis &timeElapsed);
+  void update(bool *movesForFrame, CollidableObjects &collidables, TimeMillis &timeElapsed);
 
   ofPoint position;
 
 private:
 
-  void updateIdle(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed);
-  void updateWalking(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed);
-  void updateJumping(bool *moves, BlockVect &blocks, TimeMillis &timeElapsed);
+  void updateIdle(bool *moves, CollidableObjects &collidables, TimeMillis &timeElapsed);
+  void updateWalking(bool *moves, CollidableObjects &collidables, TimeMillis &timeElapsed);
+  void updateJumping(bool *moves, CollidableObjects &collidables, TimeMillis &timeElapsed);
 
 
   void drawIdle(TimeMillis &timeElapsed, ofRectangle &bounds, ofPoint &bottomLeft);
@@ -52,11 +52,11 @@ private:
   ofImage ramaWalk5;
   ofImage ramaWalk6;
   ofImage ramaJumping;
-
+  double speed;
   bool onBlock;
   Block *weightBearingBlock;
 
-  double speed;
+
   ofVec2f velocity;
   ofxPanel gui;
   ofxLabel positionX;
@@ -65,6 +65,11 @@ private:
   ofxLabel velocityY;
 
   ofxLabel debug;
+
+  ofxGuiGroup characterHud;
+  static constexpr int maxHealth = 100;
+  int health;
+  ofxIntSlider healthIndicator;
 };
 
 }

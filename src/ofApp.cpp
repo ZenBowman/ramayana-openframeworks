@@ -4,14 +4,11 @@
 #include "colorfilters.h"
 #include "portaudio.h"
 
-
 Ramayana::PlayerMovementRecognizer movementRecognizer;
 
 void debug(std::string msg) { ofLog(OF_LOG_NOTICE, msg); }
 
-ofApp::~ofApp(){
-  fftw_destroy_plan(fftPlan);
-}
+ofApp::~ofApp() { fftw_destroy_plan(fftPlan); }
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -32,7 +29,8 @@ void ofApp::setup() {
 
   soundStream.setup(this, 0, 2, 44100, bufferSize, 4);
 
-  fftPlan = fftw_plan_dft_1d(bufferSize, fftIn, fftOut, FFTW_FORWARD, FFTW_ESTIMATE);
+  fftPlan =
+      fftw_plan_dft_1d(bufferSize, fftIn, fftOut, FFTW_FORWARD, FFTW_ESTIMATE);
 }
 
 void ofApp::audioIn(float *input, int bufferSize, int nChannels) {
@@ -74,7 +72,8 @@ void ofApp::getAudioFFT() {
   fftw_execute(fftPlan);
   // extract elements from fftOut here
   for (int i = 0; i < bufferSize; i++) {
-    ofLogNotice() << "Frequency[" << i << "] = " << fftOut[i][0] << ", " << fftOut[i][1];
+    ofLogNotice() << "Frequency[" << i << "] = " << fftOut[i][0] << ", "
+                  << fftOut[i][1];
   }
 }
 
@@ -147,14 +146,15 @@ void ofApp::draw() {
   if (soundBufferSize > subWindowSize.x) {
     originalI = i = soundBufferSize - subWindowSize.x;
   }
-  for (i; i < soundBufferSize; i++) {
+  for (; i < soundBufferSize; i++) {
     ofVertex(i - originalI, 50 - soundBuffer[i] * 500.0f);
   }
   ofEndShape(false);
 
   const int bandWidth = 4;
-  for (i=0; i < bufferSize; i++) {
-    ofRect(i*bandWidth, 200, bandWidth,-(pow(pow(fftOut[i][0],2) + pow(fftOut[i][1], 2), 0.5) * 10));
+  for (i = 0; i < bufferSize; i++) {
+    ofRect(i * bandWidth, 200, bandWidth,
+           -(pow(pow(fftOut[i][0], 2) + pow(fftOut[i][1], 2), 0.5) * 10));
   }
 
   ofPopMatrix();
