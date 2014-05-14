@@ -54,8 +54,10 @@
 		<Unit filename="src/ofApp.h" />
 		<Unit filename="src/patternrecognizer.cpp" />
 		<Unit filename="src/patternrecognizer.h" />
+		<Unit filename="src/rakshas.cpp" />
 		<Unit filename="src/rama.cpp" />
 		<Unit filename="src/rama.h" />
+		<Unit filename="src/soundrecognizer.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -26,7 +26,8 @@ enum class ArrowType {
 
 enum class ArrowState {
   AIRBORNE,
-  GROUNDED
+  GROUNDED,
+  STRUCK
 };
 
 struct Arrow {
@@ -39,6 +40,7 @@ struct Arrow {
 
   void draw(ofRectangle &bounds, ofPoint &bottomLeft);
   void update(TimeMillis &timeElapsed);
+  ofRectangle bounds();
 };
 
 class Rama {

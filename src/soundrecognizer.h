@@ -5,12 +5,15 @@
 #include <complex>
 #include <fftw3.h>
 #include "ofMain.h"
+#include "ofxGui.h"
+#include "patternrecognizer.h"
 
 class SoundRecognizer {
 public:
   void audioIn(float *input, int bufferSize, int nChannels);
   void draw();
   void update();
+  vector<Ramayana::InputAction> provideActions();
 
   SoundRecognizer(ofPoint subWindowSize);
   ~SoundRecognizer();
@@ -27,6 +30,16 @@ private:
   ofPoint subWindowSize;
   fftw_plan fftPlan;
 
+  ofxGuiGroup frequencies;
+  ofxLabel lowFrequencyTotal;
+  ofxLabel highFrequencyTotal;
+  ofxLabel minFrequency;
+  ofxLabel maxFrequency;
+
+  double lowFrequencyPower;
+  double highFrequencyPower;
+
+  bool shootTriggered;
 };
 
 #endif

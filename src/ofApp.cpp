@@ -80,6 +80,8 @@ void ofApp::update() {
     auto actions = movementRecognizer.provideActions(frameMat);
     actionsForFrame.insert(actionsForFrame.end(), actions.begin(),
                            actions.end());
+    auto soundActions = soundRecognizer->provideActions();
+    actionsForFrame.insert(actionsForFrame.end(), soundActions.begin(), soundActions.end());
   }
 
   game->update(actionsForFrame, deltaTime);

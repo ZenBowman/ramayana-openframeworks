@@ -16,7 +16,7 @@
 #       (default) PROJECT_ROOT = . (this directory)
 #
 ################################################################################
-# PROJECT_ROOT = .
+PROJECT_ROOT = .
 
 ################################################################################
 # PROJECT SPECIFIC CHECKS
@@ -78,6 +78,7 @@
 ################################################################################
 PROJECT_LDFLAGS=-Wl,-rpath=./libs
 PROJECT_LDFLAGS += -lfftw3 -lm
+PROJECT_LDFLAGS += -lgtest
 
 ################################################################################
 # PROJECT DEFINES
@@ -138,5 +139,5 @@ PROJECT_CFLAGS = -std=c++11
 #		(default) PROJECT_CC = (blank)
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-PROJECT_CXX = g++
+PROJECT_CXX = clang++
 # PROJECT_CC =

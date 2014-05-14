@@ -84,8 +84,12 @@ void Arrow::update(TimeMillis &timeElapsed) {
 
 void Arrow::draw(ofRectangle &bounds, ofPoint &bottomLeft) {
  image->draw(position.x - bottomLeft.x,
-                    bounds.height - ARROW_HEIGHT - position.y - bottomLeft.y,
+                    bounds.height - ARROW_HEIGHT - position.y + bottomLeft.y,
                     ARROW_WIDTH, ARROW_HEIGHT);
+}
+
+ofRectangle Arrow::bounds() {
+  return ofRectangle(position.x, position.y, ARROW_WIDTH, ARROW_HEIGHT);
 }
 
 void Rama::updateFiring(bool *moves, CollidableObjects &collidables,
@@ -242,12 +246,27 @@ void Rama::update(bool *moves, CollidableObjects &collidables,
       break;
   }
   for (auto &arrow: arrowsInFlight) {
+    if (arrow.state == ArrowState::AIRBORNE){
     arrow.update(timeElapsed);
+    for (const auto &block : collidables.blocks) {
+        if (doesCollide(arrow.bounds(), block.bounds)) {
+          arrow.state = ArrowState::STRUCK;
+        }
+    }
+    for (auto &rakshas : collidables.rakshases) {
+      if (doesCollide(arrow.bounds(), rakshas.getBounds())) {
+        rakshas.arrowStrike(arrow);
+        arrow.state = ArrowState::STRUCK;
+      }
+    }
+    }
   }
 
   for (auto &rakshas : collidables.rakshases) {
+    if (rakshas.isAlive()) {
     if (doesCollide(boundingBoxFor(position), rakshas.getBounds())) {
       health--;
+    }
     }
   }
   healthIndicator.setup("Health", health, 0, maxHealth);
@@ -255,7 +274,7 @@ void Rama::update(bool *moves, CollidableObjects &collidables,
 
 void Rama::drawRama(ofImage &image, ofRectangle &bounds, ofPoint &bottomLeft) {
   image.draw(position.x - bottomLeft.x,
-             bounds.height - RAMA_HEIGHT - position.y - bottomLeft.y +
+             bounds.height - RAMA_HEIGHT - position.y + bottomLeft.y +
                  IMAGE_PIXEL_ADJUSTMENT,
              RAMA_WIDTH, RAMA_HEIGHT);
 }
@@ -307,7 +326,7 @@ void Rama::draw(const long long &timeElapsed, ofRectangle &bounds,
                 ofPoint &bottomLeft) {
 
   healthIndicator.setPosition(position.x - bottomLeft.x,
-                              bounds.height - 200 - position.y);
+                              bounds.height - 200 - position.y + bottomLeft.y);
   healthIndicator.draw();
   //characterHud.setPosition(position.x, 500 - position.y);
   //characterHud.draw();

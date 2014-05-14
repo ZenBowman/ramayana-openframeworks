@@ -2,22 +2,75 @@
 #include "ofMain.h"
 #include <complex>
 
+using namespace Ramayana;
+
 SoundRecognizer::SoundRecognizer(ofPoint _subWindowSize)
-    : subWindowSize(_subWindowSize) {
+    : subWindowSize(_subWindowSize), shootTriggered(false) {
   fftPlan =
       fftw_plan_dft_1d(bufferSize, fftIn, fftOut, FFTW_FORWARD, FFTW_ESTIMATE);
+
+  frequencies.setup();
+  frequencies.add(lowFrequencyTotal.setup("LF:", std::to_string(0)));
+  frequencies.add(highFrequencyTotal.setup("HF:", std::to_string(0)));
+  frequencies.setPosition(subWindowSize.x * 2, 10);
 }
 
 SoundRecognizer::~SoundRecognizer() { fftw_destroy_plan(fftPlan); }
 
+vector<InputAction>
+SoundRecognizer::provideActions() {
+  vector<InputAction> actionsForFrame;
+  if (shootTriggered) {
+    shootTriggered = false;
+    actionsForFrame.push_back(InputAction::FIRE);
+  }
+  return actionsForFrame;
+}
+
 void SoundRecognizer::update() {
+  constexpr unsigned int maxLowFrequencyThreshold = 50;
+  constexpr unsigned int minHighFrequencyThreshold = 50;
+
   // insert elements into fftIn here
   fftw_execute(fftPlan);
   // extract elements from fftOut here
-  for (int i = 0; i < bufferSize; i++) {
-    ofLogNotice() << "Frequency[" << i << "] = " << fftOut[i][0] << ", "
-                  << fftOut[i][1];
+  lowFrequencyPower = 0;
+  highFrequencyPower = 0;
+  double minFreq = 9999;
+  double maxFreq = 0;
+
+  size_t maxFrequencyIndex = 0;
+  size_t minFrequencyIndex = 0;
+
+  for (size_t i = 0; i < bufferSize/2; i++) {
+    std::complex<double> fftOutI(fftOut[i][0], fftOut[i][1]);
+    double amount = std::abs<double>(fftOutI);
+
+    if (amount > maxFreq) {
+      maxFreq = amount;
+      maxFrequencyIndex = i;
+    }
+    if (amount < minFreq) {
+      minFreq = amount;
+      minFrequencyIndex = i;
+    }
+
+    if (i > minHighFrequencyThreshold) {
+      highFrequencyPower += amount;
+    }
+    if (i < maxLowFrequencyThreshold) {
+      lowFrequencyPower += amount;
+    }
   }
+
+  if (lowFrequencyPower > 20) {
+    shootTriggered = true;
+  }
+
+  lowFrequencyTotal.setup("Low frequency:", std::to_string(lowFrequencyPower));
+  highFrequencyTotal.setup("High frequency:", std::to_string(highFrequencyPower));
+  minFrequency.setup("Min frequency:", std::to_string(minFrequencyIndex));
+  maxFrequency.setup("Max frequency:", std::to_string(maxFrequencyIndex));
 }
 
 void SoundRecognizer::draw() {
@@ -46,9 +99,10 @@ void SoundRecognizer::draw() {
   }
   ofEndShape(false);
 
-  const int bandWidth = 4;
+  const int bandWidth = 1;
 
-  for (i = 0; i < subWindowSize.x/bandWidth; i++) {
+
+  for (i = 0; i < bufferSize/2; i++) {
     std::complex<double> fftOutI(fftOut[i][0], fftOut[i][1]);
     ofRect(i * bandWidth, 200, bandWidth, - std::abs<double>(fftOutI) * 50);
   }
@@ -56,6 +110,7 @@ void SoundRecognizer::draw() {
   ofPopMatrix();
   ofPopStyle();
 
+  frequencies.draw();
 }
 
 void SoundRecognizer::audioIn(float *input, int bufferSize, int nChannels) {

@@ -4,9 +4,12 @@
 #include "ofMain.h"
 #include "constants.h"
 
+namespace Ramayana {
 enum class RakshasState {
   MOVING_TOWARDS_FINAL, MOVING_BACK_TOWARDS_INITIAL
 };
+
+struct Arrow;
 
 class Rakshas {
 public:
@@ -19,6 +22,8 @@ public:
   Rakshas(ofPoint initialPosition, ofPoint finalPosition, long period);
   ~Rakshas();
 
+  void arrowStrike(Arrow &arrow);
+  bool isAlive();
 private:
   ofPoint position;
   ofPoint initialPosition;
@@ -30,8 +35,9 @@ private:
   ofImage rakshasLeft;
   ofImage rakshasRight;
   long periodTimeElapsed;
+  bool alive;
 };
 
 typedef std::vector<Rakshas> RakshasVect;
-
+}
 #endif

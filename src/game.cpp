@@ -17,16 +17,21 @@ Game::Game(ofPoint initialPlayerPosition, ofRectangle gameBounds)
   basicBlockImage.loadImage("block.png");
   blockImages.push_back(basicBlockImage);
 
-  blocks.push_back(Block(ofRectangle(300, 100, 100, 50), blockImages[0]));
+  blocks.push_back(Block(ofRectangle(250, 100, 100, 50), blockImages[0]));
 
-  blocks.push_back(Block(ofRectangle(550, 50, 100, 50), blockImages[0]));
-  blocks.push_back(Block(ofRectangle(550, 100, 100, 50), blockImages[0]));
+  blocks.push_back(Block(ofRectangle(650, 50, 100, 50), blockImages[0]));
+  blocks.push_back(Block(ofRectangle(650, 100, 100, 50), blockImages[0]));
 
   blocks.push_back(Block(ofRectangle(1200, 25, 100, 50), blockImages[0]));
   blocks.push_back(Block(ofRectangle(1200, 75, 100, 50), blockImages[0]));
   blocks.push_back(Block(ofRectangle(1200, 125, 100, 50), blockImages[0]));
 
-  rakshases.push_back(Rakshas(ofPoint(2000, 20), ofPoint(1400, 20), 10000L));
+
+  blocks.push_back(Block(ofRectangle(2000, 150, 100, 50), blockImages[0]));
+
+  blocks.push_back(Block(ofRectangle(2200, 25, 100, 350), blockImages[0]));
+
+  rakshases.push_back(Rakshas(ofPoint(1800, 20), ofPoint(1400, 20), 5000L));
   rakshases.push_back(Rakshas(ofPoint(1000, 20), ofPoint(1000, 420), 10000L));
 }
 
@@ -52,6 +57,12 @@ void Game::update(std::vector<Ramayana::InputAction> &movesForFrame,
   if ((rama.position.x - bottomLeft.x) > (0.75 * bounds.width)) {
     bottomLeft.x += (bounds.width * 0.5);
   }
+  if ((rama.position.y - bottomLeft.y) > 400) {
+    bottomLeft.y += 300;
+  }
+  if (rama.position.y < bottomLeft.y) {
+    bottomLeft.y -= 300;
+  }
 
 }
 
@@ -69,7 +80,7 @@ void Game::draw(const long long &timeElapsed) {
 
   for (const auto &block : blocks) {
     block.texture.draw(block.bounds.x - bottomLeft.x,
-                       bounds.height - block.bounds.y - block.bounds.height,
+                       bounds.height - block.bounds.y - block.bounds.height + bottomLeft.y,
                        block.bounds.width, block.bounds.height);
   }
 
