@@ -16,6 +16,11 @@ enum KeyMap {
   KEY_LEFT = 2
 };
 
+enum class AppState {
+  MAIN_MENU,
+  IN_GAME
+};
+
 class ofApp : public ofBaseApp {
 public:
   void setup();
@@ -47,6 +52,7 @@ private:
   ofPixels background;
   ofImage backgroundImg;
   ofImage rednessFilterImage;
+  ofImage mainMenuImg;
   cv::Mat backgroundMat;
   ofxPanel gui;
   ofxFloatSlider colorDominationFactorSlider;
@@ -63,5 +69,5 @@ private:
   bool shoot;
 
   const ofPoint playerInitialPosition = ofPoint(0, 20, 0);
-
+  AppState appState;
 };

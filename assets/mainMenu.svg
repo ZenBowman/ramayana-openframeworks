@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1800"
+   height="1200"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="New document 1">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.24748737"
+     inkscape:cx="187.84445"
+     inkscape:cy="908.62551"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1198"
+     inkscape:window-height="653"
+     inkscape:window-x="0"
+     inkscape:window-y="59"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,147.63782)">
+    <text
+       xml:space="preserve"
+       style="font-size:72px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+       x="682.8631"
+       y="-22.440136"
+       id="text3013"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3015"
+         x="682.8631"
+         y="-22.440136">Ramayana</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="666.70068"
+       y="54.331467"
+       id="text3017"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3019"
+         x="666.70068"
+         y="54.331467">A physical adventure</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3021"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(238.396,-91.069278)"><flowRegion
+         id="flowRegion3023"><rect
+           id="rect3025"
+           width="662.6601"
+           height="343.45187"
+           x="1006.1119"
+           y="779.77655" /></flowRegion><flowPara
+         id="flowPara3027">Design and programming:</flowPara><flowPara
+         id="flowPara3029">Prasan Samtani</flowPara><flowPara
+         id="flowPara3031">github.com/zenbowman</flowPara><flowPara
+         id="flowPara3033" /><flowPara
+         id="flowPara3035">Character art:</flowPara><flowPara
+         id="flowPara3037">Ujwal Nair</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3039"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(-64.649763,-200.16575)"><flowRegion
+         id="flowRegion3041"><rect
+           id="rect3043"
+           width="848.52814"
+           height="488.91385"
+           x="133.34013"
+           y="351.47186" /></flowRegion><flowPara
+         id="flowPara3045">Controls:</flowPara><flowPara
+         id="flowPara3047">The central character is controlled by your physical movements. Move around to see how you can affect the character. Wear a red shirt or t-shirt for optimal tracking.</flowPara><flowPara
+         id="flowPara3051" /><flowPara
+         id="flowPara3049">To fire an arrow, shout out your favorite &quot;kia&quot;. </flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="64.649765"
+       y="765.47888"
+       id="text3053"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3055"
+         x="64.649765"
+         y="765.47888">Press 'P' to start playing</tspan></text>
+  </g>
+</svg>

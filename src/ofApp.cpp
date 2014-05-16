@@ -17,11 +17,12 @@ void ofApp::resetGame() {
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+  appState = AppState::MAIN_MENU;
+  mainMenuImg.loadImage("mainMenu.png");
   lastElapsedTime = 0L;
   subWindowSize.x = SUBWINDOW_SIZE_X;
   subWindowSize.y = SUBWINDOW_SIZE_Y;
 
-  auto windowSize = ofGetWindowSize();
   cam.initGrabber(CAPTURE_WIDTH, CAPTURE_HEIGHT, false);
 
   resetGame();
@@ -29,7 +30,8 @@ void ofApp::setup() {
   movementRecognizer.configure(
       ofRectangle(subWindowSize.x, 0, subWindowSize.x, subWindowSize.y));
 
-  soundRecognizer = std::unique_ptr<SoundRecognizer>(new SoundRecognizer(subWindowSize));
+  soundRecognizer =
+      std::unique_ptr<SoundRecognizer>(new SoundRecognizer(subWindowSize));
 
   soundStream.setup(this, 0, 2, 44100, bufferSize, 4);
   shoot = false;
@@ -39,62 +41,74 @@ void ofApp::audioIn(float *input, int bufferSize, int nChannels) {
   soundRecognizer->audioIn(input, bufferSize, nChannels);
 }
 
-
 //--------------------------------------------------------------
 void ofApp::update() {
-  const long long newElapsedTime = ofGetElapsedTimeMillis();
-  const long long deltaTime = newElapsedTime - lastElapsedTime;
-
-  lastElapsedTime = newElapsedTime;
-
-  cam.update();
-  soundRecognizer->update();
-
-  if (cam.isFrameNew()) {
-    actionsForFrame.clear();
-
-    background.setFromPixels(cam.getPixels(), cam.getWidth(), cam.getHeight(),
-                             OF_IMAGE_COLOR);
-    backgroundImg.setFromPixels(background);
-    ofxCvColorImage frameImg;
-    frameImg.setFromPixels(background);
-
-    cv::Mat frameMat(frameImg.getCvImage());
-    cv::cvtColor(frameMat, frameMat, CV_RGB2BGR);
-    ofLog(OF_LOG_NOTICE, "Frameimage, width = %d, height = %d", frameMat.cols,
-          frameMat.rows);
-
-    if (keyDown[KeyMap::KEY_RIGHT]) {
-      actionsForFrame.push_back(Ramayana::InputAction::MOVE_RIGHT);
+  if (appState == AppState::MAIN_MENU) {
+  } else if (appState == AppState::IN_GAME) {
+    if (game->ended) {
+      appState = AppState::MAIN_MENU;
     }
-    if (keyDown[KeyMap::KEY_UP]) {
-      actionsForFrame.push_back(Ramayana::InputAction::JUMP);
+    const long long newElapsedTime = ofGetElapsedTimeMillis();
+    const long long deltaTime = newElapsedTime - lastElapsedTime;
+
+    lastElapsedTime = newElapsedTime;
+
+    cam.update();
+    soundRecognizer->update();
+
+    if (cam.isFrameNew()) {
+      actionsForFrame.clear();
+
+      background.setFromPixels(cam.getPixels(), cam.getWidth(), cam.getHeight(),
+                               OF_IMAGE_COLOR);
+      backgroundImg.setFromPixels(background);
+      ofxCvColorImage frameImg;
+      frameImg.setFromPixels(background);
+
+      cv::Mat frameMat(frameImg.getCvImage());
+      cv::cvtColor(frameMat, frameMat, CV_RGB2BGR);
+      ofLog(OF_LOG_NOTICE, "Frameimage, width = %d, height = %d", frameMat.cols,
+            frameMat.rows);
+
+      if (keyDown[KeyMap::KEY_RIGHT]) {
+        actionsForFrame.push_back(Ramayana::InputAction::MOVE_RIGHT);
+      }
+      if (keyDown[KeyMap::KEY_UP]) {
+        actionsForFrame.push_back(Ramayana::InputAction::JUMP);
+      }
+      if (keyDown[KeyMap::KEY_LEFT]) {
+        actionsForFrame.push_back(Ramayana::InputAction::MOVE_LEFT);
+      }
+      if (shoot) {
+        actionsForFrame.push_back(Ramayana::InputAction::FIRE);
+        shoot = false;
+      }
+      auto actions = movementRecognizer.provideActions(frameMat);
+      actionsForFrame.insert(actionsForFrame.end(), actions.begin(),
+                             actions.end());
+      auto soundActions = soundRecognizer->provideActions();
+      actionsForFrame.insert(actionsForFrame.end(), soundActions.begin(),
+                             soundActions.end());
     }
-    if (keyDown[KeyMap::KEY_LEFT]) {
-      actionsForFrame.push_back(Ramayana::InputAction::MOVE_LEFT);
-    }
-    if (shoot) {
-      actionsForFrame.push_back(Ramayana::InputAction::FIRE);
-      shoot = false;
-    }
-    auto actions = movementRecognizer.provideActions(frameMat);
-    actionsForFrame.insert(actionsForFrame.end(), actions.begin(),
-                           actions.end());
-    auto soundActions = soundRecognizer->provideActions();
-    actionsForFrame.insert(actionsForFrame.end(), soundActions.begin(), soundActions.end());
+
+    game->update(actionsForFrame, deltaTime);
   }
-
-  game->update(actionsForFrame, deltaTime);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-  const long long timeElapsed = ofGetElapsedTimeMillis();
-  ofSetColor(255);
-  game->draw(timeElapsed);
-  backgroundImg.draw(0, 0, subWindowSize.x, subWindowSize.y);
-  movementRecognizer.draw();
-  soundRecognizer->draw();
+  if (appState == AppState::MAIN_MENU) {
+
+    auto windowSize = ofGetWindowSize();
+    mainMenuImg.draw(0, 0, windowSize.x, windowSize.y);
+  } else if (appState == AppState::IN_GAME) {
+    const long long timeElapsed = ofGetElapsedTimeMillis();
+    ofSetColor(255);
+    game->draw(timeElapsed);
+    backgroundImg.draw(0, 0, subWindowSize.x, subWindowSize.y);
+    movementRecognizer.draw();
+    soundRecognizer->draw();
+  }
 }
 
 //--------------------------------------------------------------
@@ -110,6 +124,12 @@ void ofApp::keyPressed(int key) {
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
+  if (appState == AppState::MAIN_MENU) {
+    if (key == 'p') {
+      appState = AppState::IN_GAME;
+      resetGame();
+    }
+  }
   if (key == OF_KEY_RIGHT) {
     keyDown[KeyMap::KEY_RIGHT] = false;
   } else if (key == OF_KEY_UP) {

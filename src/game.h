@@ -31,6 +31,7 @@ public:
   void draw(const long long &timeElapsed);
   Game(ofPoint initialPlayerPosition, ofRectangle gameBounds);
   ~Game();
+  bool ended;
 
 private:
   ofPoint bottomLeft;

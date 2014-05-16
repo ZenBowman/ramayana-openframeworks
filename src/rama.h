@@ -48,7 +48,7 @@ public:
   Rama(ofPoint initialPosition);
   ~Rama();
   void draw(TimeMillis &timeElapsed, ofRectangle &bounds, ofPoint &bottomLeft);
-  void update(bool *movesForFrame, CollidableObjects &collidables,
+  bool update(bool *movesForFrame, CollidableObjects &collidables,
               TimeMillis &timeElapsed);
 
   ofPoint position;
@@ -106,7 +106,6 @@ private:
   Block *weightBearingBlock;
 
   ofVec2f velocity;
-  ofxPanel gui;
   ofxLabel positionX;
   ofxLabel positionY;
   ofxLabel velocityX;
@@ -114,7 +113,7 @@ private:
 
   ofxLabel debug;
 
-  ofxGuiGroup characterHud;
+  ofxPanel characterHud;
   int health;
   ofxIntSlider healthIndicator;
 

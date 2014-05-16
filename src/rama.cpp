@@ -38,16 +38,11 @@ Rama::Rama(ofPoint initialPosition)
   ramaFired.loadImage("ramaShooting2.png");
   defaultArrowImage.loadImage("arrow.png");
 
-  gui.setup();
-  gui.add(positionX.setup("X", ""));
-  gui.add(positionY.setup("Y", ""));
-  gui.add(velocityY.setup("Velocity.Y", ""));
-  gui.setPosition(initialPosition);
-
   characterHud.setup();
-  characterHud.setPosition(position);
-  characterHud.add(healthIndicator.setup("Health", health, 0, maxHealth));
   characterHud.add(velocityX.setup("Velocity.X", ""));
+  characterHud.add(healthIndicator.setup("Health", health, 0, maxHealth));
+  characterHud.setPosition(position);
+
 }
 
 Rama::~Rama() {}
@@ -227,7 +222,7 @@ void Rama::updateIdle(bool *moves, CollidableObjects &collidables,
   }
 }
 
-void Rama::update(bool *moves, CollidableObjects &collidables,
+bool Rama::update(bool *moves, CollidableObjects &collidables,
                   TimeMillis &timeElapsed) {
   switch (state) {
   case RamaState::IDLE:
@@ -247,7 +242,7 @@ void Rama::update(bool *moves, CollidableObjects &collidables,
     break;
   }
 
-  velocityX.setup("Velocity.X", std::to_string(velocity.x));
+  velocityX = std::to_string(velocity.x);
   // Remove arrows that have already struck something
   std::vector<size_t> arrowsToErase;
   for (size_t i = 0; i < arrowsInFlight.size(); i++) {
@@ -283,7 +278,8 @@ void Rama::update(bool *moves, CollidableObjects &collidables,
       }
     }
   }
-  healthIndicator.setup("Health", health, 0, maxHealth);
+  healthIndicator = health;
+  return (health > 0);
 }
 
 void Rama::drawRama(ofImage &image, ofRectangle &bounds, ofPoint &bottomLeft) {
@@ -338,7 +334,8 @@ void Rama::draw(const long long &timeElapsed, ofRectangle &bounds,
                 ofPoint &bottomLeft) {
 
   characterHud.setPosition(position.x - bottomLeft.x,
-                              bounds.height - 200 - position.y + bottomLeft.y);
+                              bounds.height - 300 - position.y + bottomLeft.y);
+  //healthIndicator.draw();
   characterHud.draw();
   //characterHud.setPosition(position.x, 500 - position.y);
   //characterHud.draw();

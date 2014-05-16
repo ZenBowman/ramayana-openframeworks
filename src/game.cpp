@@ -9,7 +9,7 @@ Block::Block(ofRectangle _bounds, ofImage &_texture)
 
 Game::Game(ofPoint initialPlayerPosition, ofRectangle gameBounds)
     : bottomLeft(ofPoint(0, 0, 0)), bounds(gameBounds),
-      rama(initialPlayerPosition) {
+      rama(initialPlayerPosition), ended(false) {
 
   // Later on all these should be loaded from instances of Level objects
   backgroundImage.loadImage("tatakasForest.png");
@@ -73,7 +73,10 @@ void Game::update(std::vector<Ramayana::InputAction> &movesForFrame,
     rakshas.update(timeElapsed);
   }
 
-  rama.update(actionsEnabled, collidables, timeElapsed);
+  if (!rama.update(actionsEnabled, collidables, timeElapsed)) {
+    ended = true;
+  }
+
   if ((rama.position.x - bottomLeft.x) > (0.75 * bounds.width)) {
     bottomLeft.x += (bounds.width * 0.5);
   }
