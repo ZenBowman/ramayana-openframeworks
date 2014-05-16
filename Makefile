@@ -11,10 +11,3 @@ endif
 
 # call the project makefile!
 include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/compile.project.mk
-
-test: test.o
-	clang++ testbin/test.o -lgtest -lgtest_main -o testbin/test
-
-test.o: src/test_collision.cpp
-	clang++ -c src/test_collision.cpp -I/home/psamtani/development/openFrameworks_0.8.1/addons/ofxOpenCv/src/ -o testbin/test.o
-

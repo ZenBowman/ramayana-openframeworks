@@ -25,6 +25,7 @@ struct CollidableObjects {
 
 class Game {
 public:
+  void removeDeadRakshases();
   void update(std::vector<Ramayana::InputAction> &movesForFrame,
               const long long &timeElapsed);
   void draw(const long long &timeElapsed);

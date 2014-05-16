@@ -29,18 +29,38 @@ Game::Game(ofPoint initialPlayerPosition, ofRectangle gameBounds)
 
   blocks.push_back(Block(ofRectangle(2000, 150, 100, 50), blockImages[0]));
 
-  blocks.push_back(Block(ofRectangle(2200, 25, 100, 350), blockImages[0]));
+  blocks.push_back(Block(ofRectangle(2200, 175, 400, 250), blockImages[0]));
+  blocks.push_back(Block(ofRectangle(2600, 175, 800, 50), blockImages[0]));
 
   rakshases.push_back(Rakshas(ofPoint(1800, 20), ofPoint(1400, 20), 5000L));
   rakshases.push_back(Rakshas(ofPoint(1000, 20), ofPoint(1000, 420), 10000L));
+
+  rakshases.push_back(Rakshas(ofPoint(2500, 20), ofPoint(3500, 20), 3000L));
+  rakshases.push_back(Rakshas(ofPoint(2600, 20), ofPoint(3500, 20), 2000L));
+  rakshases.push_back(Rakshas(ofPoint(2700, 20), ofPoint(3500, 20), 1000L));
 }
 
 Game::~Game() {}
+
+void Game::removeDeadRakshases(){
+  std::vector<size_t> indicesToRemove;
+  for (size_t i=0; i<rakshases.size(); i++){
+    if (!rakshases[i].isAlive()) {
+      indicesToRemove.push_back(i);
+    }
+  }
+
+  for(auto index : indicesToRemove) {
+    rakshases.erase(rakshases.begin() + index);
+  }
+}
 
 void Game::update(std::vector<Ramayana::InputAction> &movesForFrame,
                   const long long &timeElapsed) {
 
   CollidableObjects collidables(blocks, rakshases);
+  removeDeadRakshases();
+
   for (int i = 0; i < InputAction::NUM_ACTIONS; i++) {
     actionsEnabled[i] = false;
   }

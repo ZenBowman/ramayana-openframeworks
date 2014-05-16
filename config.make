@@ -139,5 +139,5 @@ PROJECT_CFLAGS = -std=c++11
 #		(default) PROJECT_CC = (blank)
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-PROJECT_CXX = clang++
+PROJECT_CXX = g++
 # PROJECT_CC =
