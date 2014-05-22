@@ -88,8 +88,12 @@ void Rama::updateFiring(bool *moves, CollidableObjects &collidables,
   stateTimer += timeElapsed;
   if (stateTimer > timeInFiringState) {
     fireArrow();
-    state = RamaState::FIRED;
     stateTimer = 0;
+
+    if ((--numArrowsToFire) == 0) {
+      state = RamaState::FIRED;
+    }
+
   }
 }
 
@@ -201,6 +205,13 @@ void Rama::updateIdle(bool *moves, CollidableObjects &collidables,
   BlockVect &blocks = collidables.blocks;
   if (moves[InputAction::FIRE]) {
     state = RamaState::FIRING;
+    numArrowsToFire = 1;
+    stateTimer = 0;
+    return;
+  }
+  if (moves[InputAction::DOUBLE_FIRE]) {
+    state = RamaState::FIRING;
+    numArrowsToFire = 2;
     stateTimer = 0;
     return;
   }

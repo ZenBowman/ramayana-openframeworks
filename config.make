@@ -79,6 +79,7 @@ PROJECT_ROOT = .
 PROJECT_LDFLAGS=-Wl,-rpath=./libs
 PROJECT_LDFLAGS += -lfftw3 -lm
 PROJECT_LDFLAGS += -lgtest
+PROJECT_LDFLAGS += -lzmq
 
 ################################################################################
 # PROJECT DEFINES

@@ -8,7 +8,7 @@ using namespace std;
 using namespace Ramayana;
 using namespace MatrixOperations;
 
-RednessFilter rednessFilter(200, 1.5);
+RednessFilter rednessFilter(150, 1.5);
 const int rednessFilterMinArea = 2500;
 
 constexpr double moveRightMinXRatio = 5.0 / 7;
@@ -25,6 +25,10 @@ void PlayerMovementRecognizer::draw() {
   rightMoveLine.draw();
   leftMoveLine.draw();
   jumpLine.draw();
+
+  for (size_t i=0; i<faces.size(); i++) {
+    ofRect(faces[i].x * xScale, faces[i].y * yScale, faces[i].width * xScale, faces[i].height * yScale);
+  }
 }
 
 void PlayerMovementRecognizer::configure(const ofRectangle &bounds) {
@@ -32,6 +36,7 @@ void PlayerMovementRecognizer::configure(const ofRectangle &bounds) {
   gui.add(areaLabel.setup("Area", ""));
   gui.add(centerOfMassLabelX.setup("X", "COM"));
   gui.add(centerOfMassLabelY.setup("Y", "COM"));
+  gui.add(numFacesLabel.setup("NumFaces:", "0"));
   gui.setPosition(bounds.x, bounds.y);
   this->bounds = bounds;
 
@@ -55,17 +60,28 @@ void PlayerMovementRecognizer::configure(const ofRectangle &bounds) {
   for (int i = 0; i < centerOfMassHistorySize; i++) {
     centerOfMassHistory[i] = cv::Point(0, 0);
   }
+
+  faceCascade.load("/home/psamtani/development/opencv-2.4.7/data/haarcascades/haarcascade_frontalface_alt.xml");
 }
 
 vector<InputAction>
 PlayerMovementRecognizer::provideActions(cv::Mat &sourceImage) {
   vector<InputAction> actionsForFrame;
+  //cv::Mat frame_gray;
+  faces.clear();
+
+  //cv::cvtColor( sourceImage, frame_gray, CV_BGR2GRAY );
+  //cv::equalizeHist( frame_gray, frame_gray );
+  //cv::resize(frame_gray, frame_gray, cv::Size(SUBWINDOW_SIZE_X, SUBWINDOW_SIZE_Y));
+  //-- Detect faces
+  //faceCascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cv::Size(30, 30) );
+  numFacesLabel = std::to_string(faces.size());
 
   cv::Mat newMat = applyPixelFilter(sourceImage, rednessFilter);
 
   int maxArea;
 
-  cv::Mat contourMat = drawMaxCountour(newMat, maxArea, maxCenterOfMass);
+  cv::Mat contourMat = drawMaxCountour(newMat, maxArea, maxCenterOfMass, rednessFilterMinArea);
 
   double smoothedCenterOfMassX = 0.0;
   double smoothedCenterOfMassY = 0.0;

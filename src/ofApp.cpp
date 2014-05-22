@@ -4,6 +4,7 @@
 #include "colorfilters.h"
 #include "portaudio.h"
 
+
 Ramayana::PlayerMovementRecognizer movementRecognizer;
 
 void debug(std::string msg) { ofLog(OF_LOG_NOTICE, msg); }
@@ -13,6 +14,7 @@ void ofApp::resetGame() {
   const ofRectangle gameBounds(0, 0, windowSize.x, windowSize.y);
   game = std::unique_ptr<Ramayana::Game>(
       new Ramayana::Game(playerInitialPosition, gameBounds));
+
 }
 
 //--------------------------------------------------------------
@@ -32,13 +34,14 @@ void ofApp::setup() {
 
   soundRecognizer =
       std::unique_ptr<SoundRecognizer>(new SoundRecognizer(subWindowSize));
-
-  soundStream.setup(this, 0, 2, 44100, bufferSize, 4);
+  //soundStream.setup(this, 0, 2, 16000, bufferSize, 4);
   shoot = false;
 }
 
 void ofApp::audioIn(float *input, int bufferSize, int nChannels) {
-  soundRecognizer->audioIn(input, bufferSize, nChannels);
+  if (soundRecognizer != nullptr) {
+    soundRecognizer->audioIn(input, bufferSize, nChannels);
+  }
 }
 
 //--------------------------------------------------------------

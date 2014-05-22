@@ -4,116 +4,66 @@
 
 using namespace Ramayana;
 
+void AsrThread::threadedFunction() {
+  zmq::context_t context (1);
+  zmq::socket_t subscriber (context, ZMQ_SUB);
+  subscriber.connect("tcp://localhost:5556");
+  subscriber.setsockopt(ZMQ_SUBSCRIBE, "", 0);
+
+  while (isThreadRunning()) {
+  zmq::message_t update;
+  subscriber.recv(&update);
+  const char *data = static_cast<char*>(update.data());
+  lock();
+  lastMessage =data;
+  lastMessage = lastMessage.substr(0, update.size());
+  if (lastMessage == "GO") {
+    queuedActions.push_back(InputAction::FIRE);
+  } else if (lastMessage == "NAMAH") {
+    queuedActions.push_back(InputAction::DOUBLE_FIRE);
+  }
+  unlock();
+  ofLogNotice() << "Received" << data;
+  }
+}
+
 SoundRecognizer::SoundRecognizer(ofPoint _subWindowSize)
-    : subWindowSize(_subWindowSize), shootTriggered(false) {
-  fftPlan =
-      fftw_plan_dft_1d(bufferSize, fftIn, fftOut, FFTW_FORWARD, FFTW_ESTIMATE);
+    : initializedPocketSphinx(false), count(0), subWindowSize(_subWindowSize),
+      shootTriggered(false) {
 
   frequencies.setup();
   frequencies.add(lowFrequencyTotal.setup("LF:", std::to_string(0)));
   frequencies.add(highFrequencyTotal.setup("HF:", std::to_string(0)));
   frequencies.setPosition(subWindowSize.x * 2, 10);
+
+  recvThread.startThread(true, false);
 }
 
-SoundRecognizer::~SoundRecognizer() { fftw_destroy_plan(fftPlan); }
+SoundRecognizer::~SoundRecognizer() {
+  recvThread.stopThread();
+}
 
-vector<InputAction>
-SoundRecognizer::provideActions() {
+vector<InputAction> SoundRecognizer::provideActions() {
+  recvThread.lock();
   vector<InputAction> actionsForFrame;
-  if (shootTriggered) {
-    shootTriggered = false;
-    actionsForFrame.push_back(InputAction::FIRE);
-  }
+  actionsForFrame.insert(actionsForFrame.end(), recvThread.queuedActions.begin(), recvThread.queuedActions.end());
+  recvThread.queuedActions.clear();
+  recvThread.unlock();
   return actionsForFrame;
 }
 
 void SoundRecognizer::update() {
-  constexpr unsigned int maxLowFrequencyThreshold = 50;
-  constexpr unsigned int minHighFrequencyThreshold = 50;
-
-  // insert elements into fftIn here
-  fftw_execute(fftPlan);
-  // extract elements from fftOut here
-  lowFrequencyPower = 0;
-  highFrequencyPower = 0;
-  double minFreq = 9999;
-  double maxFreq = 0;
-
-  size_t maxFrequencyIndex = 0;
-  size_t minFrequencyIndex = 0;
-
-  for (size_t i = 0; i < bufferSize/2; i++) {
-    std::complex<double> fftOutI(fftOut[i][0], fftOut[i][1]);
-    double amount = std::abs<double>(fftOutI);
-
-    if (amount > maxFreq) {
-      maxFreq = amount;
-      maxFrequencyIndex = i;
-    }
-    if (amount < minFreq) {
-      minFreq = amount;
-      minFrequencyIndex = i;
-    }
-
-    if (i > minHighFrequencyThreshold) {
-      highFrequencyPower += amount;
-    }
-    if (i < maxLowFrequencyThreshold) {
-      lowFrequencyPower += amount;
-    }
-  }
-
-  if (lowFrequencyPower > 20) {
-    shootTriggered = true;
-  }
-
-  lowFrequencyTotal.setup("Low frequency:", std::to_string(lowFrequencyPower));
-  highFrequencyTotal.setup("High frequency:", std::to_string(highFrequencyPower));
-  minFrequency.setup("Min frequency:", std::to_string(minFrequencyIndex));
-  maxFrequency.setup("Max frequency:", std::to_string(maxFrequencyIndex));
+  recvThread.lock();
+  lowFrequencyTotal = recvThread.lastMessage;
+  recvThread.unlock();
 }
 
 void SoundRecognizer::draw() {
-  ofPushStyle();
-  ofPushMatrix();
-  ofTranslate(subWindowSize.x * 2, 0, 0);
-
-  ofSetColor(60);
-  ofDrawBitmapString("Left Channel", 4, 18);
-
-  ofSetLineWidth(1);
-  ofRect(0, 0, subWindowSize.x, subWindowSize.y);
-
-  ofSetColor(245, 58, 135);
-  ofSetLineWidth(3);
-
-  ofBeginShape();
-  const int soundBufferSize = soundBuffer.size();
-  unsigned int i = 0;
-  unsigned int originalI = 0;
-  if (soundBufferSize > subWindowSize.x) {
-    originalI = i = soundBufferSize - subWindowSize.x;
-  }
-  for (; i < soundBufferSize; i++) {
-    ofVertex(i - originalI, 50 - soundBuffer[i] * 800.0f);
-  }
-  ofEndShape(false);
-
-  const int bandWidth = 1;
-
-
-  for (i = 0; i < bufferSize/2; i++) {
-    std::complex<double> fftOutI(fftOut[i][0], fftOut[i][1]);
-    ofRect(i * bandWidth, 200, bandWidth, - std::abs<double>(fftOutI) * 50);
-  }
-
-  ofPopMatrix();
-  ofPopStyle();
-
   frequencies.draw();
 }
 
 void SoundRecognizer::audioIn(float *input, int bufferSize, int nChannels) {
+
 
   float curVol = 0.0;
 
@@ -133,6 +83,10 @@ void SoundRecognizer::audioIn(float *input, int bufferSize, int nChannels) {
     curVol += left[i] * left[i];
     curVol += right[i] * right[i];
     numCounted += 2;
+  }
+
+  if ((count > 10) && (count < 50)) {
+    //PocketSphinx::ps_process_raw(ps, audioForRecognition, 512, FALSE, FALSE);
   }
 
   //this is how we get the mean of rms :)

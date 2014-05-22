@@ -58,6 +58,7 @@
 		<Unit filename="src/rama.cpp" />
 		<Unit filename="src/rama.h" />
 		<Unit filename="src/soundrecognizer.cpp" />
+		<Unit filename="src/soundrecognizer.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

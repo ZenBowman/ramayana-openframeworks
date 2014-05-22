@@ -11,6 +11,7 @@ enum InputAction {
   MOVE_LEFT,
   JUMP,
   FIRE,
+  DOUBLE_FIRE,
   NUM_ACTIONS
 };
 
@@ -49,6 +50,7 @@ private:
   ofxLabel areaLabel;
   ofxLabel centerOfMassLabelX;
   ofxLabel centerOfMassLabelY;
+  ofxLabel numFacesLabel;
   double area;
   cv::Point maxCenterOfMass;
   cv::Point smoothedCenterOfMass;
@@ -60,6 +62,9 @@ private:
   MoveLine leftMoveLine;
   MoveLine rightMoveLine;
   MoveLine jumpLine;
+
+  cv::CascadeClassifier faceCascade;
+  std::vector<cv::Rect> faces;
 };
 
 }

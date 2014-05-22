@@ -118,6 +118,7 @@ private:
   ofxIntSlider healthIndicator;
 
   long stateTimer;
+  int numArrowsToFire;
 
   std::vector<Arrow> arrowsInFlight;
 };

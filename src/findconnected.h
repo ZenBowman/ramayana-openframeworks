@@ -4,6 +4,6 @@
 #include "ofxOpenCv.h"
 
 cv::Mat drawMaxCountour(cv::Mat &src, int &maxAreaOut,
-                        cv::Point &maxCenterOfMassOut);
+                        cv::Point &maxCenterOfMassOut, int minArea);
 
 #endif
